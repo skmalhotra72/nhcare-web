@@ -7,7 +7,7 @@ import { useCart } from '@/lib/cart';
 
 export default function CartDrawer() {
   const [open, setOpen] = useState(false);
-  const { items, count, subtotal, removeItem, loading } = useCart();
+  const { items = [], count = 0, subtotal = 0, removeItem, loading } = useCart();
 
   return (
     <>

@@ -14,7 +14,12 @@ interface CartCtx {
   loading: boolean;
 }
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.uat.medibridge24x7.com/api';
-const CartContext = createContext<CartCtx>({} as CartCtx);
+const CartContext = createContext<CartCtx>({
+  items: [], count: 0, subtotal: 0, token: '',
+  addItem: async () => {}, removeItem: async () => {},
+  clearCart: async () => {}, refreshCart: async () => {},
+  loading: false,
+});
 
 function getToken(): string {
   if (typeof window === 'undefined') return '';

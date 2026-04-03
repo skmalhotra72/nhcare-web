@@ -8,7 +8,7 @@ import { useCart } from '@/lib/cart';
 interface Props { testId: number; testName: string; mrp: number; }
 
 export default function AddToCartButton({ testId, testName, mrp }: Props) {
-  const { addItem, items, loading } = useCart();
+  const { addItem, items = [], loading } = useCart();
   const [added, setAdded] = useState(false);
   const router = useRouter();
   const inCart = items.some(i => i.test_id === testId);
