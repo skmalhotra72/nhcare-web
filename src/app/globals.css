@@ -186,3 +186,60 @@ a{text-decoration:none;color:inherit}
 .popular-tag{background:var(--bg-2);border:1px solid var(--border);color:var(--text-3)}
 .popular-tag:hover{border-color:#1B4D3E;color:#1B4D3E;background:var(--green-bg)}
 .dark .popular-tag:hover{border-color:#4ade80;color:#4ade80;background:rgba(27,77,62,0.15)}
+
+/* Special Offers nav item */
+@keyframes glow-pulse {
+  0%,100%{box-shadow:0 0 8px rgba(244,185,66,0.4),0 0 16px rgba(244,185,66,0.2);color:#d4971a}
+  50%{box-shadow:0 0 16px rgba(244,185,66,0.7),0 0 32px rgba(244,185,66,0.3);color:#F4B942}
+}
+@keyframes float-nav {
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-2px)}
+}
+.nav-special{
+  font-size:14px;font-weight:700;color:#d4971a;
+  padding:6px 14px;border-radius:20px;
+  background:rgba(244,185,66,0.08);
+  border:1px solid rgba(244,185,66,0.3);
+  transition:all 0.2s;text-decoration:none;
+  animation:glow-pulse 2s ease-in-out infinite,float-nav 3s ease-in-out infinite;
+  display:inline-block;
+}
+.nav-special:hover{
+  background:rgba(244,185,66,0.15);
+  border-color:rgba(244,185,66,0.5);
+  transform:translateY(-2px) scale(1.05) !important;
+}
+.dark .nav-special{color:#F4B942;background:rgba(244,185,66,0.12);border-color:rgba(244,185,66,0.35)}
+
+/* Float animations */
+@keyframes float-1{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-15px) rotate(5deg)}}
+@keyframes float-2{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(-5deg)}}
+@keyframes float-3{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.1)}}
+@keyframes bounce-in{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.2) rotate(5deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes shimmer-gold{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes counter-spin{0%{transform:rotate(0deg)}100%{transform:rotate(-360deg)}}
+.float-1{animation:float-1 4s ease-in-out infinite}
+.float-2{animation:float-2 5s ease-in-out infinite}
+.float-3{animation:float-3 3.5s ease-in-out infinite}
+.bounce-in{animation:bounce-in 0.6s ease-out forwards}
+.shimmer-gold{
+  background:linear-gradient(90deg,#d4971a 0%,#F4B942 25%,#fcd34d 50%,#F4B942 75%,#d4971a 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer-gold 3s linear infinite;
+}
+.price-badge{
+  background:linear-gradient(135deg,#1B4D3E,#2d6b60);
+  border-radius:100px;color:white;
+  font-family:'Inter',sans-serif;font-weight:700;
+  box-shadow:0 4px 20px rgba(27,77,62,0.4);
+}
+.offer-card{
+  border-radius:20px;overflow:hidden;
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+  position:relative;
+}
+.offer-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 24px 60px rgba(0,0,0,0.15)}

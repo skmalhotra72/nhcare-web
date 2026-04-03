@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, Sparkles, TrendingUp, TrendingDown, Minus, Brain, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Brain, TrendingUp, TrendingDown, Minus, ChevronDown, ChevronUp } from 'lucide-react';
 import { api } from '@/lib/api';
 
-export default function ReportDetailPage({ params }: { params: { id: string } }) {
+export default function ReportDetailPage({ params }:{params:{id:string}}) {
   const router = useRouter();
   const [report, setReport] = useState<any>(null);
   const [aiSummary, setAiSummary] = useState('');
@@ -13,149 +13,140 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string[]>([]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('nhcare_token');
-    if (!token) { router.push('/auth/login'); return; }
-    api.reports.get(parseInt(params.id), token)
-      .then(r => setReport(r.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [params.id, router]);
+  useEffect(()=>{
+    const token=localStorage.getItem('nhcare_token');
+    if(!token){router.push('/auth/login');return;}
+    api.reports.get(parseInt(params.id),token).then(r=>setReport(r.data)).catch(()=>{}).finally(()=>setLoading(false));
+  },[params.id,router]);
 
-  const loadAI = async () => {
-    const token = localStorage.getItem('nhcare_token');
-    if (!token || aiLoading) return;
+  const loadAI=async()=>{
+    const token=localStorage.getItem('nhcare_token');
+    if(!token||aiLoading)return;
     setAiLoading(true);
-    try {
-      const res = await api.reports.aiSummary(parseInt(params.id), token);
-      setAiSummary(res.ai_summary || '');
-    } catch { setAiSummary('AI summary unavailable at this time.'); }
-    finally { setAiLoading(false); }
+    try{const r=await api.reports.aiSummary(parseInt(params.id),token);setAiSummary(r.ai_summary||'');}
+    catch{setAiSummary('AI summary unavailable at this time.');}
+    finally{setAiLoading(false);}
   };
 
-  const toggleTest = (name: string) => setExpanded(e => e.includes(name) ? e.filter(x => x !== name) : [...e, name]);
-
-  const flagColor = (flag: string) => {
-    if (flag === 'HIGH') return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20';
-    if (flag === 'LOW') return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20';
-    return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20';
+  const toggleTest=(name:string)=>setExpanded(e=>e.includes(name)?e.filter(x=>x!==name):[...e,name]);
+  const flagStyle=(flag:string)=>{
+    if(flag==='HIGH')return{bg:'rgba(239,68,68,0.08)',color:'#dc2626',border:'rgba(239,68,68,0.2)'};
+    if(flag==='LOW')return{bg:'rgba(59,130,246,0.08)',color:'#2563eb',border:'rgba(59,130,246,0.2)'};
+    return{bg:'rgba(16,185,129,0.08)',color:'#059669',border:'rgba(16,185,129,0.2)'};
   };
 
-  const FlagIcon = ({ flag }: { flag: string }) => {
-    if (flag === 'HIGH') return <TrendingUp className="w-3.5 h-3.5" />;
-    if (flag === 'LOW') return <TrendingDown className="w-3.5 h-3.5" />;
-    return <Minus className="w-3.5 h-3.5" />;
-  };
+  if(loading)return<div className="min-h-screen flex items-center justify-center" style={{background:'var(--bg)'}}><Loader2 className="w-7 h-7 animate-spin" style={{color:'#F4B942'}}/></div>;
+  if(!report)return<div className="min-h-screen flex items-center justify-center" style={{background:'var(--bg)'}}><p style={{color:'var(--text-3)'}}>Report not found</p></div>;
 
-  if (loading) return <div className="min-h-screen pt-20 flex items-center justify-center bg-cream-50 dark:bg-forest-950"><Loader2 className="w-8 h-8 text-gold-400 animate-spin" /></div>;
-  if (!report) return <div className="min-h-screen pt-20 flex items-center justify-center bg-cream-50 dark:bg-forest-950"><p className="font-body text-forest-700 dark:text-cream-200">Report not found</p></div>;
-
-  const { header, tests, summary } = report;
-
+  const{header,tests,summary}=report;
   return (
-    <div className="min-h-screen bg-cream-50 dark:bg-forest-950 pt-16">
-      <div className="bg-gradient-to-r from-forest-900 to-forest-800 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <Link href="/dashboard/reports" className="inline-flex items-center gap-1.5 text-cream-100/50 hover:text-cream-100 font-body text-sm mb-4 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> My Reports
+    <div className="min-h-screen" style={{background:'var(--bg)'}}>
+      <div style={{background:'#1B4D3E',padding:'40px 0 48px'}}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <Link href="/dashboard/reports" className="inline-flex items-center gap-1.5 mb-4 text-[13px] font-body" style={{color:'rgba(255,255,255,0.5)'}}>
+            <ArrowLeft className="w-4 h-4"/> My Reports
           </Link>
-          <h1 className="font-display text-xl sm:text-2xl font-700 text-white mb-1">{header.package_name || 'Lab Report'}</h1>
-          <div className="flex flex-wrap gap-3 text-xs font-body text-cream-100/50">
-            <span>{header.patient_name}</span>
-            <span>·</span><span>{header.gender}, {header.age} yrs</span>
-            <span>·</span><span>{header.health_date}</span>
-            <span>·</span><span>{header.pcc_name}</span>
+          <h1 className="font-display font-700 text-white mb-1" style={{fontSize:'24px'}}>{header.package_name||'Lab Report'}</h1>
+          <div className="flex flex-wrap gap-3 text-[12px] font-body" style={{color:'rgba(255,255,255,0.5)'}}>
+            <span>{header.patient_name}</span><span>·</span>
+            <span>{header.gender}, {header.age} yrs</span><span>·</span>
+            <span>{header.health_date}</span><span>·</span>
+            <span>{header.pcc_name}</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-5">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-5">
         {/* Summary stats */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: 'Total Parameters', val: summary.total_observations, col: 'bg-forest-50 dark:bg-forest-900/40' },
-            { label: 'Normal', val: summary.normal_count, col: 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' },
-            { label: 'Abnormal', val: summary.abnormal_count, col: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400' },
-          ].map(s => (
-            <div key={s.label} className={`${s.col} rounded-2xl p-4 text-center`}>
-              <p className="font-display text-2xl font-700 text-forest-900 dark:text-cream-100">{s.val}</p>
-              <p className="font-body text-xs text-forest-500 dark:text-forest-400 mt-0.5">{s.label}</p>
+            {label:'Total Parameters',val:summary.total_observations,col:null},
+            {label:'Normal',val:summary.normal_count,col:{bg:'rgba(16,185,129,0.08)',border:'rgba(16,185,129,0.2)',text:'#059669'}},
+            {label:'Abnormal',val:summary.abnormal_count,col:{bg:'rgba(239,68,68,0.08)',border:'rgba(239,68,68,0.2)',text:'#dc2626'}},
+          ].map(s=>(
+            <div key={s.label} className="rounded-xl p-4 text-center"
+              style={{background:s.col?(s.col as any).bg:'var(--bg-2)',border:`1px solid ${s.col?(s.col as any).border:'var(--border)'}`}}>
+              <p className="font-display font-700 text-[28px]" style={{color:s.col?(s.col as any).text:'var(--text-1)'}}>{s.val}</p>
+              <p className="text-[11px] font-body mt-0.5" style={{color:'var(--text-3)'}}>{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* AI Summary */}
-        <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 bg-gradient-to-r from-forest-900/5 to-gold-400/5 dark:from-forest-800/30 dark:to-gold-400/10 border-b border-forest-100 dark:border-forest-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-gold-500" />
-                <h2 className="font-display text-lg font-700 text-forest-900 dark:text-cream-100">AI Health Summary</h2>
-              </div>
-              {!aiSummary && (
-                <button onClick={loadAI} disabled={aiLoading}
-                  className="btn-gold text-forest-950 font-body font-600 text-xs px-4 py-2 rounded-xl flex items-center gap-1.5">
-                  {aiLoading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Analyzing...</> : <><Sparkles className="w-3.5 h-3.5" /> Generate</>}
-                </button>
-              )}
+        <div className="card overflow-hidden">
+          <div className="px-5 py-4 flex items-center justify-between" style={{borderBottom:'1px solid var(--border)',background:'var(--bg-2)'}}>
+            <div className="flex items-center gap-2">
+              <Brain className="w-5 h-5" style={{color:'#1B4D3E'}} />
+              <h2 className="font-display font-700 text-[18px]" style={{color:'var(--text-1)'}}>AI Health Summary</h2>
             </div>
+            {!aiSummary && (
+              <button onClick={loadAI} disabled={aiLoading} className="btn btn-green text-[12px] py-2 px-4">
+                {aiLoading?<><Loader2 className="w-3.5 h-3.5 animate-spin"/>Analysing...</>:<>✦ Generate</>}
+              </button>
+            )}
           </div>
           <div className="p-5">
-            {aiSummary ? (
-              <div className="font-body text-sm text-forest-700 dark:text-forest-300 leading-relaxed whitespace-pre-wrap">{aiSummary}</div>
-            ) : (
-              <p className="font-body text-sm text-forest-400 dark:text-forest-500 text-center py-4">Click &ldquo;Generate&rdquo; for AI-powered plain language explanation of your results</p>
-            )}
+            {aiSummary
+              ? <p className="text-[14px] font-body leading-relaxed whitespace-pre-wrap" style={{color:'var(--text-2)'}}>{aiSummary}</p>
+              : <p className="text-[13px] font-body text-center py-4" style={{color:'var(--text-4)'}}>Click &ldquo;Generate&rdquo; for an AI-powered plain language explanation of your results</p>}
           </div>
         </div>
 
-        {/* Test Results */}
-        {tests?.map((t: any) => (
-          <div key={t.test_name} className="glass-card rounded-2xl overflow-hidden">
-            <button onClick={() => toggleTest(t.test_name)}
-              className="w-full px-5 py-4 flex items-center justify-between gap-3 hover:bg-forest-50/50 dark:hover:bg-forest-900/20 transition-colors">
-              <div className="flex items-center gap-2">
-                <h3 className="font-display text-sm font-700 text-forest-900 dark:text-cream-100 text-left">{t.test_name}</h3>
-                <span className="font-body text-xs text-forest-400">({t.observations?.length} params)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {t.observations?.some((o: any) => o.flag !== 'NORMAL') && (
-                  <span className="w-2 h-2 bg-red-400 rounded-full" />
-                )}
-                {expanded.includes(t.test_name) ? <ChevronUp className="w-4 h-4 text-forest-400" /> : <ChevronDown className="w-4 h-4 text-forest-400" />}
-              </div>
-            </button>
-
-            {expanded.includes(t.test_name) && (
-              <div className="border-t border-forest-50 dark:border-forest-800 overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-forest-50/50 dark:bg-forest-900/30">
-                      {['Parameter', 'Result', 'Unit', 'Reference', 'Status'].map(h => (
-                        <th key={h} className="px-4 py-2.5 text-left font-body text-[10px] font-600 text-forest-500 dark:text-forest-400 uppercase tracking-wide">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-forest-50 dark:divide-forest-900">
-                    {t.observations?.map((o: any, i: number) => (
-                      <tr key={i} className="hover:bg-forest-50/30 dark:hover:bg-forest-900/20 transition-colors">
-                        <td className="px-4 py-3 font-body text-xs text-forest-800 dark:text-cream-200">{o.obs_name}</td>
-                        <td className="px-4 py-3 font-mono text-xs font-600 text-forest-900 dark:text-cream-100">{o.value}</td>
-                        <td className="px-4 py-3 font-body text-xs text-forest-500 dark:text-forest-400">{o.unit}</td>
-                        <td className="px-4 py-3 font-body text-xs text-forest-500 dark:text-forest-400">{o.range_min}–{o.range_max}</td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex items-center gap-1 font-body text-[10px] font-600 px-2 py-0.5 rounded-full ${flagColor(o.flag)}`}>
-                            <FlagIcon flag={o.flag} />{o.flag}
-                          </span>
-                        </td>
+        {/* Test results */}
+        {tests?.map((t:any)=>{
+          const fs=flagStyle('');
+          const hasAbnormal=t.observations?.some((o:any)=>o.flag!=='NORMAL');
+          return (
+            <div key={t.test_name} className="card overflow-hidden">
+              <button onClick={()=>toggleTest(t.test_name)}
+                className="w-full px-5 py-4 flex items-center justify-between gap-3 transition-all"
+                style={{background: expanded.includes(t.test_name)?'var(--bg-2)':'transparent'}}
+                onMouseEnter={e=>(e.currentTarget.style.background='var(--bg-2)')}
+                onMouseLeave={e=>(e.currentTarget.style.background=expanded.includes(t.test_name)?'var(--bg-2)':'transparent')}>
+                <div className="flex items-center gap-2 text-left">
+                  <h3 className="font-display font-700 text-[15px]" style={{color:'var(--text-1)'}}>{t.test_name}</h3>
+                  <span className="text-[11px] font-body" style={{color:'var(--text-4)'}}>({t.observations?.length})</span>
+                  {hasAbnormal && <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />}
+                </div>
+                {expanded.includes(t.test_name)
+                  ? <ChevronUp className="w-4 h-4 flex-shrink-0" style={{color:'var(--text-4)'}} />
+                  : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{color:'var(--text-4)'}} />}
+              </button>
+              {expanded.includes(t.test_name) && (
+                <div style={{borderTop:'1px solid var(--border)',overflowX:'auto'}}>
+                  <table style={{width:'100%',borderCollapse:'collapse'}}>
+                    <thead>
+                      <tr style={{background:'var(--bg-2)'}}>
+                        {['Parameter','Result','Unit','Reference','Status'].map(h=>(
+                          <th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:'10px',fontWeight:700,color:'var(--text-4)',textTransform:'uppercase',letterSpacing:'0.06em',fontFamily:'Inter,sans-serif'}}>{h}</th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        ))}
+                    </thead>
+                    <tbody>
+                      {t.observations?.map((o:any,i:number)=>{
+                        const s=flagStyle(o.flag);
+                        return (
+                          <tr key={i} style={{borderTop:'1px solid var(--border)'}}>
+                            <td style={{padding:'10px 16px',fontSize:'13px',color:'var(--text-2)',fontFamily:'Inter,sans-serif'}}>{o.obs_name}</td>
+                            <td style={{padding:'10px 16px',fontSize:'13px',fontWeight:700,color:'var(--text-1)',fontFamily:'monospace'}}>{o.value}</td>
+                            <td style={{padding:'10px 16px',fontSize:'12px',color:'var(--text-4)',fontFamily:'Inter,sans-serif'}}>{o.unit}</td>
+                            <td style={{padding:'10px 16px',fontSize:'12px',color:'var(--text-4)',fontFamily:'Inter,sans-serif'}}>{o.range_min}–{o.range_max}</td>
+                            <td style={{padding:'10px 16px'}}>
+                              <span style={{display:'inline-flex',alignItems:'center',gap:'4px',fontSize:'11px',fontWeight:600,padding:'2px 8px',borderRadius:'100px',background:s.bg,color:s.color,border:`1px solid ${s.border}`,fontFamily:'Inter,sans-serif'}}>
+                                {o.flag==='HIGH'?<TrendingUp style={{width:'11px',height:'11px'}}/>:o.flag==='LOW'?<TrendingDown style={{width:'11px',height:'11px'}}/>:<Minus style={{width:'11px',height:'11px'}}/>}
+                                {o.flag}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

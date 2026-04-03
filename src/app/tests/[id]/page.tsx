@@ -1,118 +1,108 @@
 import { api } from '@/lib/api';
 import Link from 'next/link';
-import { Clock, Droplets, Microscope, ArrowLeft, ShoppingCart, CheckCircle, FlaskConical, Star } from 'lucide-react';
+import { Clock, Droplets, ArrowLeft, FlaskConical, CheckCircle2, ShoppingCart } from 'lucide-react';
 
-export default async function TestDetailPage({ params }: { params: { id: string } }) {
-  let test: any = null;
-  try { test = await api.tests.get(parseInt(params.id)); test = test.data; } catch {}
-
-  if (!test) return (
-    <div className="min-h-screen bg-cream-50 dark:bg-forest-950 pt-20 flex items-center justify-center">
+export default async function TestDetailPage({ params }:{params:{id:string}}) {
+  let test:any=null;
+  try{ const r=await api.tests.get(parseInt(params.id)); test=r.data; } catch{}
+  if(!test) return (
+    <div className="min-h-screen flex items-center justify-center" style={{background:'var(--bg)'}}>
       <div className="text-center">
-        <p className="font-display text-2xl text-forest-900 dark:text-cream-100 mb-4">Test not found</p>
-        <Link href="/tests" className="btn-forest text-white px-6 py-2.5 rounded-xl font-body font-500">Back to Tests</Link>
+        <p className="font-display text-[24px] mb-4" style={{color:'var(--text-1)'}}>Test not found</p>
+        <Link href="/tests" className="btn btn-green">Back to Tests</Link>
       </div>
     </div>
   );
-
   const name = test.test_parameter?.split('\n')[0]?.trim() || test.description || 'Test';
-
   return (
-    <div className="min-h-screen bg-cream-50 dark:bg-forest-950 pt-16">
-      <div className="bg-gradient-to-r from-forest-900 to-forest-800 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <Link href="/tests" className="inline-flex items-center gap-1.5 text-cream-100/60 hover:text-cream-100 font-body text-sm mb-4 transition-colors">
+    <div className="min-h-screen" style={{background:'var(--bg)'}}>
+      <div style={{background:'#1B4D3E',padding:'40px 0 48px'}}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <Link href="/tests" className="inline-flex items-center gap-1.5 mb-4 text-[13px] font-body transition-colors"
+            style={{color:'rgba(255,255,255,0.55)'}}>
             <ArrowLeft className="w-4 h-4" /> Back to Tests
           </Link>
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div>
-              <span className="inline-block text-[10px] font-body font-600 px-2.5 py-1 rounded-full bg-gold-400/20 text-gold-400 uppercase tracking-wide mb-3">
-                {test.type === 'PROFILE' ? 'Panel / Profile' : 'Individual Test'}
+              <span className={`badge ${test.type==='PROFILE'?'badge-gold':'badge-green'} mb-3`}>
+                {test.type==='PROFILE'?'Panel / Profile':'Individual Test'}
               </span>
-              <h1 className="font-display text-2xl sm:text-3xl font-700 text-white leading-tight">{name}</h1>
-              {test.testcode && <p className="font-mono text-xs text-cream-100/40 mt-1">Code: {test.testcode}</p>}
+              <h1 className="font-display font-700 text-white" style={{fontSize:'28px',lineHeight:'1.2'}}>{name}</h1>
+              {test.testcode && <p className="text-[11px] mt-1 font-mono" style={{color:'rgba(255,255,255,0.4)'}}>Code: {test.testcode}</p>}
             </div>
-            <div className="text-right">
-              <p className="font-display text-4xl font-800 text-gold-400">₹{test.mrp}</p>
-              <p className="font-body text-xs text-cream-100/50 mt-0.5">Inclusive of all charges</p>
+            <div className="text-right flex-shrink-0">
+              <p className="font-display font-700" style={{fontSize:'40px',color:'#F4B942',lineHeight:'1'}}>₹{test.mrp}</p>
+              <p className="text-[11px] mt-1" style={{color:'rgba(255,255,255,0.45)'}}>Inclusive of all charges</p>
             </div>
           </div>
         </div>
       </div>
-
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-5">
             {/* Quick info */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { icon: Clock, label: 'TAT', value: test.tat ? `${test.tat} Day${test.tat > 1 ? 's' : ''}` : 'Same Day' },
-                { icon: Droplets, label: 'Fasting', value: test.fasting_required || 'Not Required' },
-                { icon: FlaskConical, label: 'Tested At', value: test.tested_at || 'NABL Lab' },
-                { icon: Star, label: 'Schedule', value: test.schedule || 'Daily' },
-              ].map(i => (
-                <div key={i.label} className="glass-card rounded-xl p-3 text-center">
-                  <i.icon className="w-4 h-4 text-gold-500 mx-auto mb-1.5" />
-                  <p className="font-body text-[10px] text-forest-500 dark:text-forest-400 uppercase tracking-wide">{i.label}</p>
-                  <p className="font-body text-xs font-600 text-forest-900 dark:text-cream-100 truncate">{i.value}</p>
+                {icon:Clock,label:'TAT',value:test.tat?`${test.tat} Day${test.tat>1?'s':''}`:'Same Day'},
+                {icon:Droplets,label:'Fasting',value:test.fasting_required||'Not Required'},
+                {icon:FlaskConical,label:'Sample',value:test.tested_at||'NABL Lab'},
+                {icon:CheckCircle2,label:'Schedule',value:test.schedule||'Daily'},
+              ].map(item=>(
+                <div key={item.label} className="card p-4 text-center">
+                  <item.icon className="w-4 h-4 mx-auto mb-1.5" style={{color:'#1B4D3E'}} />
+                  <p className="text-[10px] font-body uppercase tracking-wide mb-1" style={{color:'var(--text-4)'}}>{item.label}</p>
+                  <p className="text-[12px] font-body font-600 truncate" style={{color:'var(--text-1)'}}>{item.value}</p>
                 </div>
               ))}
             </div>
-
-            {/* Description */}
             {test.description && (
-              <div className="glass-card rounded-2xl p-5">
-                <h2 className="font-display text-lg font-700 text-forest-900 dark:text-cream-100 mb-3">About This Test</h2>
-                <p className="font-body text-sm text-forest-600 dark:text-forest-300 leading-relaxed whitespace-pre-line">{test.description.replace(/\[X\]/g,'✓').trim()}</p>
+              <div className="card p-6">
+                <h2 className="font-display font-700 mb-3" style={{fontSize:'18px',color:'var(--text-1)'}}>About This Test</h2>
+                <p className="text-[14px] font-body leading-relaxed whitespace-pre-line" style={{color:'var(--text-3)'}}>
+                  {test.description.replace(/\[X\]/g,'✓').trim()}
+                </p>
               </div>
             )}
-
-            {/* Methodology */}
             {test.methodology && (
-              <div className="glass-card rounded-2xl p-5">
-                <h2 className="font-display text-lg font-700 text-forest-900 dark:text-cream-100 mb-2">Methodology</h2>
-                <p className="font-body text-sm text-forest-600 dark:text-forest-300">{test.methodology.split(',')[0].trim()}</p>
+              <div className="card p-6">
+                <h2 className="font-display font-700 mb-2" style={{fontSize:'18px',color:'var(--text-1)'}}>Methodology</h2>
+                <p className="text-[14px] font-body" style={{color:'var(--text-3)'}}>{test.methodology.split(',')[0].trim()}</p>
               </div>
             )}
-
-            {/* Observations */}
             {test.observations && test.observations.length > 0 && (
-              <div className="glass-card rounded-2xl p-5">
-                <h2 className="font-display text-lg font-700 text-forest-900 dark:text-cream-100 mb-4">Parameters Measured</h2>
-                <div className="space-y-2">
-                  {test.observations.map((o: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-forest-50 dark:border-forest-800 last:border-0">
+              <div className="card p-6">
+                <h2 className="font-display font-700 mb-4" style={{fontSize:'18px',color:'var(--text-1)'}}>
+                  Parameters Measured <span className="text-[14px] font-body font-400" style={{color:'var(--text-4)'}}>({test.observations.length})</span>
+                </h2>
+                <div className="space-y-0">
+                  {test.observations.map((o:any,i:number)=>(
+                    <div key={i} className="flex items-center justify-between py-2.5"
+                      style={{borderBottom: i<test.observations.length-1?'1px solid var(--border)':'none'}}>
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-3.5 h-3.5 text-forest-500" />
-                        <span className="font-body text-sm text-forest-800 dark:text-cream-100">{o.observation_name}</span>
+                        <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" style={{color:'#1B4D3E'}} />
+                        <span className="text-[13px] font-body" style={{color:'var(--text-2)'}}>{o.observation_name}</span>
                       </div>
-                      {o.method && <span className="font-body text-xs text-forest-400 dark:text-forest-500">{o.method}</span>}
+                      {o.method && <span className="text-[11px] font-body" style={{color:'var(--text-4)'}}>{o.method}</span>}
                     </div>
                   ))}
                 </div>
               </div>
             )}
           </div>
-
           {/* Booking sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-20 glass-card rounded-2xl p-5 space-y-4">
-              <h3 className="font-display text-lg font-700 text-forest-900 dark:text-cream-100">Book This Test</h3>
-              <div className="flex items-baseline gap-1">
-                <span className="font-display text-3xl font-800 text-forest-900 dark:text-gold-400">₹{test.mrp}</span>
-                <span className="font-body text-xs text-forest-500">total</span>
-              </div>
-              <ul className="space-y-2">
-                {[['✓ Home collection available',''],['✓ Report in 24 hours',''],['✓ NABL certified lab',''],['✓ Free report consultation','']].map(([l]) => (
-                  <li key={l} className="font-body text-xs text-forest-600 dark:text-forest-300">{l}</li>
+          <div>
+            <div className="card p-5 sticky top-20">
+              <h3 className="font-display font-700 mb-3" style={{fontSize:'18px',color:'var(--text-1)'}}>Book This Test</h3>
+              <p className="font-display font-700 mb-4" style={{fontSize:'36px',color:'var(--text-1)'}}>₹{test.mrp}</p>
+              <ul className="space-y-2 mb-5">
+                {['✓ Home collection available','✓ Report in 24 hours','✓ NABL certified lab','✓ Free report consultation'].map(l=>(
+                  <li key={l} className="text-[12px] font-body" style={{color:'var(--text-3)'}}>{l}</li>
                 ))}
               </ul>
-              <Link href="/auth/login"
-                className="w-full btn-gold text-forest-950 font-body font-700 py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm">
+              <Link href="/auth/login" className="btn btn-green w-full justify-center mb-2.5">
                 <ShoppingCart className="w-4 h-4" /> Book Now
               </Link>
-              <Link href="/auth/login"
-                className="w-full border border-forest-200 dark:border-forest-700 text-forest-700 dark:text-cream-200 font-body font-500 py-3 rounded-xl flex items-center justify-center gap-2 text-sm hover:bg-forest-50 dark:hover:bg-forest-900/30 transition-colors">
+              <Link href="/auth/login" className="btn btn-ghost w-full justify-center text-[13px]">
                 Add to Cart
               </Link>
             </div>
