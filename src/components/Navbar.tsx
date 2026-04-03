@@ -1,4 +1,5 @@
 'use client';
+import CartDrawer from '@/components/CartDrawer';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, Phone, Globe, Moon, Sun, ChevronDown, User } from 'lucide-react';
@@ -109,7 +110,8 @@ export default function Navbar() {
                 {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
 
-              <Link href="/auth/login" className="btn btn-ghost h-8 py-0 px-4 text-[13px]">
+              <CartDrawer />
+            <Link href="/auth/login" className="btn btn-ghost h-8 py-0 px-4 text-[13px]">
                 <User className="w-3.5 h-3.5" /> Sign In
               </Link>
               <Link href="/tests" className="btn btn-gold h-8 py-0 px-5 text-[13px]">
@@ -140,7 +142,8 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-3 border-t border-ink-100 dark:border-white/8 flex gap-2">
-                <Link href="/auth/login" onClick={() => setOpen(false)} className="btn btn-ghost flex-1 justify-center py-2.5 text-[13px]">Sign In</Link>
+                <CartDrawer />
+            <Link href="/auth/login" onClick={() => setOpen(false)} className="btn btn-ghost flex-1 justify-center py-2.5 text-[13px]">Sign In</Link>
                 <Link href="/tests" onClick={() => setOpen(false)} className="btn btn-gold flex-1 justify-center py-2.5 text-[13px]">Book Test</Link>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { CartProvider } from '@/lib/cart';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -15,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className="bg-cream-50 dark:bg-forest-950 font-body antialiased">
         <Navbar />
-        <main>{children}</main>
+        <main><CartProvider>{children}</CartProvider></main>
         <Footer />
       </body>
     </html>

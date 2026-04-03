@@ -67,7 +67,8 @@ function TestsContent() {
                   <div className="flex items-center justify-between mt-4 pt-3"
                     style={{borderTop:'1px solid var(--border)'}}>
                     <span className="font-display font-700 text-[20px]" style={{color:'var(--text-1)'}}>₹{t.mrp}</span>
-                    <button className="btn btn-green text-[11px] py-1.5 px-3">Book</button>
+                    <a href={`/tests/${t.id}`}
+                      className="btn btn-green text-[11px] py-1.5 px-3">Book</a>
                   </div>
                 </div>
               );
