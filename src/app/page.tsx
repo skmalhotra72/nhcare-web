@@ -1,192 +1,170 @@
 import Link from 'next/link';
-import { ArrowRight, Home, Star, Shield, Clock, Microscope, Package, Heart, Brain, Zap, Leaf, Activity, ChevronRight, Phone, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Home, Star, Shield, Clock, Microscope, Package, Heart, Brain, Zap, Leaf, Activity, Phone, CheckCircle2, ChevronRight, MapPin, Droplets, FlaskConical } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import { api } from '@/lib/api';
 
 const CATEGORIES = [
-  { icon: Heart, label: 'Heart & Cardiac', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-900/20', q: 'cardiac' },
-  { icon: Activity, label: 'Diabetes & Sugar', color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20', q: 'diabetes' },
-  { icon: Brain, label: 'Thyroid Tests', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-900/20', q: 'thyroid' },
-  { icon: Leaf, label: 'Liver Function', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20', q: 'liver' },
-  { icon: Zap, label: 'Kidney Function', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20', q: 'kidney' },
-  { icon: Microscope, label: 'Complete Blood', color: 'text-forest-600', bg: 'bg-forest-50 dark:bg-forest-900/40', q: 'CBC' },
-  { icon: Package, label: 'Vitamin Tests', color: 'text-gold-500', bg: 'bg-gold-50 dark:bg-gold-900/20', q: 'vitamin' },
-  { icon: Shield, label: 'Full Body Check', color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-900/20', q: 'full body' },
-];
-
-const STATS = [
-  { value: '663K+', label: 'Patients Served' },
-  { value: '490+', label: 'Partner Labs' },
-  { value: '1875+', label: 'Tests Available' },
-  { value: '25+', label: 'Years Excellence' },
+  { icon: Heart, label: 'Heart & Cardiac', q: 'cardiac', color: '#ef4444', bg: '#fef2f2' },
+  { icon: Activity, label: 'Diabetes', q: 'diabetes', color: '#f59e0b', bg: '#fffbeb' },
+  { icon: Brain, label: 'Thyroid', q: 'thyroid', color: '#8b5cf6', bg: '#f5f3ff' },
+  { icon: Leaf, label: 'Liver', q: 'liver', color: '#10b981', bg: '#ecfdf5' },
+  { icon: Zap, label: 'Kidney', q: 'kidney', color: '#3b82f6', bg: '#eff6ff' },
+  { icon: Microscope, label: 'Blood CBC', q: 'CBC', color: '#1B4D3E', bg: '#f0f7f4' },
+  { icon: Package, label: 'Vitamins', q: 'vitamin', color: '#F4B942', bg: '#fffbeb' },
+  { icon: Shield, label: 'Full Body', q: 'full body', color: '#6366f1', bg: '#eef2ff' },
 ];
 
 const STEPS = [
-  { n: '01', title: 'Search & Book', desc: 'Find your test, choose home collection or lab visit, pick a slot', icon: Microscope },
-  { n: '02', title: 'Sample Collection', desc: 'Our certified phlebotomist collects sample at your doorstep', icon: Home },
-  { n: '03', title: 'AI-Powered Report', desc: 'Get digital report with plain-language AI summary in 24hrs', icon: Brain },
+  { n: '1', title: 'Search & Book', desc: 'Find tests by name, symptom or health condition. Book in under 2 minutes.', icon: Microscope },
+  { n: '2', title: 'Sample Collection', desc: 'Certified phlebotomist arrives at your home between 7AM–9PM.', icon: Home },
+  { n: '3', title: 'AI-Powered Report', desc: 'Digital report with plain-language AI summary delivered in 24 hours.', icon: Brain },
 ];
 
-async function getPopularTests() {
-  try {
-    const res = await api.tests.list('', 8);
-    return res.data || [];
-  } catch { return []; }
-}
+const TRUST = [
+  { val: '663K+', label: 'Patients Served', sub: 'Since 1999' },
+  { val: '490+', label: 'Partner Labs', sub: 'Delhi-NCR' },
+  { val: '1875+', label: 'Tests Available', sub: 'All categories' },
+  { val: '24hr', label: 'Report Delivery', sub: 'Most tests' },
+];
 
+async function getTests() {
+  try { const r = await api.tests.list('', 8); return r.data || []; } catch { return []; }
+}
 async function getPackages() {
-  try {
-    const res = await api.packages.list('', 6);
-    return res.data || [];
-  } catch { return []; }
+  try { const r = await api.packages.list('', 6); return r.data || []; } catch { return []; }
 }
 
 export default async function HomePage() {
-  const [tests, packages] = await Promise.all([getPopularTests(), getPackages()]);
-
+  const [tests, packages] = await Promise.all([getTests(), getPackages()]);
   return (
     <div className="min-h-screen">
-      {/* HERO */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-forest-950 via-forest-900 to-forest-800 pt-16">
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-3xl animate-pulse-slow" />
-          <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-forest-700/30 rounded-full blur-3xl animate-pulse-slow" style={{animationDelay:'1.5s'}} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-forest-800/20 to-transparent rounded-full" />
-          {/* Grid pattern */}
-          <div className="absolute inset-0 opacity-5" style={{backgroundImage:'linear-gradient(#F4B942 1px, transparent 1px), linear-gradient(90deg, #F4B942 1px, transparent 1px)', backgroundSize:'60px 60px'}} />
-        </div>
 
-        {/* Floating 3D lotus */}
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block animate-float">
-          <svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-64 h-64 opacity-20">
-            <circle cx="140" cy="140" r="120" stroke="#F4B942" strokeWidth="1" strokeDasharray="4 8"/>
-            <circle cx="140" cy="140" r="80" stroke="#F4B942" strokeWidth="0.5" strokeDasharray="2 6"/>
-            <path d="M140 60C140 60 110 90 110 120C110 136.569 123.431 150 140 150C156.569 150 170 136.569 170 120C170 90 140 60 140 60Z" stroke="#F4B942" strokeWidth="2" fill="none"/>
-            <path d="M80 100C80 100 60 120 65 145C68.5 162 83 170 97 166C111 162 115 148 108 135C101 122 80 100 80 100Z" stroke="#F4B942" strokeWidth="2" fill="none"/>
-            <path d="M200 100C200 100 220 120 215 145C211.5 162 197 170 183 166C169 162 165 148 172 135C179 122 200 100 200 100Z" stroke="#F4B942" strokeWidth="2" fill="none"/>
-            <path d="M60 145C60 145 50 170 60 190C67 204 82 208 93 202C104 196 104 182 96 173C88 164 60 145 60 145Z" stroke="#F4B942" strokeWidth="1.5" fill="none" opacity="0.6"/>
-            <path d="M220 145C220 145 230 170 220 190C213 204 198 208 187 202C176 196 176 182 184 173C192 164 220 145 220 145Z" stroke="#F4B942" strokeWidth="1.5" fill="none" opacity="0.6"/>
-            <line x1="140" y1="150" x2="140" y2="220" stroke="#F4B942" strokeWidth="2"/>
-            <path d="M115 205C115 205 140 220 165 205" stroke="#F4B942" strokeWidth="1.5" fill="none"/>
-          </svg>
-        </div>
+      {/* ── HERO ─────────────────────────────────────────────── */}
+      <section className="relative pt-28 pb-16 bg-white dark:bg-slate-900 overflow-hidden">
+        {/* Subtle background accent */}
+        <div className="absolute top-0 right-0 w-[480px] h-[480px] bg-forest-50 dark:bg-forest-950/30 rounded-full -translate-y-32 translate-x-32 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold-400/5 rounded-full translate-y-16 -translate-x-16 pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20">
-          <div className="max-w-2xl">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-gold-400/10 border border-gold-400/30 rounded-full px-4 py-1.5 mb-6 animate-fade-in">
-              <span className="w-2 h-2 bg-gold-400 rounded-full animate-pulse" />
-              <span className="font-body text-xs font-500 text-gold-400 tracking-wide">NABL Accredited · ISO 15189:2012 Certified</span>
-            </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              {/* NABL badge */}
+              <div className="inline-flex items-center gap-2 bg-forest-50 dark:bg-forest-950 border border-forest-100 dark:border-forest-800 rounded-full px-4 py-1.5 mb-6">
+                <div className="w-2 h-2 bg-forest-600 rounded-full" />
+                <span className="text-xs font-600 text-forest-700 dark:text-forest-300 font-body tracking-wide">NABL Accredited · ISO 15189:2012 Certified</span>
+              </div>
 
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-800 text-white leading-[1.1] mb-6 animate-fade-up">
-              Your Health,
-              <br />
-              <span className="text-gold-400">Understood</span>
-              <br />
-              <span className="text-cream-100/80 text-3xl sm:text-4xl lg:text-5xl">at Home</span>
-            </h1>
+              <h1 className="font-display text-4xl sm:text-5xl font-700 text-slate-900 dark:text-white leading-tight mb-5">
+                Diagnostic Tests<br />
+                <span className="text-forest-800 dark:text-forest-300">at Your Doorstep</span>
+              </h1>
+              <p className="text-base text-slate-500 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">
+                NABL-certified lab tests with home sample collection. Get AI-powered plain-language reports in 24 hours. Trusted by 663,000+ patients across Delhi-NCR since 1999.
+              </p>
 
-            <p className="font-body text-cream-100/70 text-base sm:text-lg leading-relaxed mb-8 animate-fade-up anim-delay-1">
-              NABL-certified lab tests delivered to your doorstep. AI-powered plain-language reports. 663,000+ patients trust NHCare across Delhi-NCR.
-            </p>
+              {/* Search */}
+              <div className="mb-6 max-w-xl">
+                <SearchBar large />
+              </div>
 
-            {/* Search */}
-            <div className="mb-6 animate-fade-up anim-delay-2">
-              <SearchBar large />
-            </div>
+              {/* Popular searches */}
+              <div className="flex flex-wrap items-center gap-2 mb-8">
+                <span className="text-xs text-slate-400 font-body">Popular:</span>
+                {['CBC', 'HbA1c', 'Thyroid TSH', 'Vitamin D', 'Lipid Profile'].map(t => (
+                  <Link key={t} href={`/tests?q=${t}`}
+                    className="text-xs font-500 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-forest-50 dark:hover:bg-forest-950 hover:text-forest-700 dark:hover:text-forest-300 px-3 py-1 rounded-full transition-all border border-slate-200 dark:border-slate-700">
+                    {t}
+                  </Link>
+                ))}
+              </div>
 
-            {/* Popular searches */}
-            <div className="flex flex-wrap gap-2 mb-8 animate-fade-up anim-delay-3">
-              <span className="font-body text-xs text-cream-100/40">Popular:</span>
-              {['CBC', 'HbA1c', 'Thyroid (TSH)', 'Vitamin D', 'Lipid Profile'].map(t => (
-                <Link key={t} href={`/tests?q=${t}`}
-                  className="font-body text-xs text-cream-100/60 hover:text-gold-400 bg-white/5 hover:bg-gold-400/10 border border-white/10 hover:border-gold-400/30 px-3 py-1 rounded-full transition-all">
-                  {t}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/tests" className="btn-primary text-sm px-6 py-3">
+                  Browse All Tests <ArrowRight className="w-4 h-4" />
                 </Link>
-              ))}
+                <Link href="/home-collection" className="btn-outline text-sm px-6 py-3">
+                  <Home className="w-4 h-4" /> Home Collection
+                </Link>
+              </div>
             </div>
 
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 animate-fade-up anim-delay-3">
-              <Link href="/tests" className="btn-gold text-forest-950 font-body font-700 px-7 py-3.5 rounded-xl flex items-center justify-center gap-2 text-base">
-                Book a Test <ArrowRight className="w-5 h-5" />
-              </Link>
-              <a href="tel:+917042191854"
-                className="border border-white/20 text-cream-100 font-body font-500 px-7 py-3.5 rounded-xl flex items-center justify-center gap-2 text-base hover:bg-white/5 transition-colors">
-                <Phone className="w-4 h-4" /> Call Now
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats bar */}
-        <div className="absolute bottom-0 left-0 right-0 bg-forest-950/80 backdrop-blur-sm border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {STATS.map(s => (
-                <div key={s.label} className="text-center">
-                  <p className="font-display text-xl font-700 text-gold-400">{s.value}</p>
-                  <p className="font-body text-xs text-cream-100/50">{s.label}</p>
-                </div>
-              ))}
+            {/* Hero visual — stats card grid */}
+            <div className="hidden lg:block">
+              <div className="grid grid-cols-2 gap-4">
+                {TRUST.map((s, i) => (
+                  <div key={s.label} className={`card p-6 ${i === 0 ? 'bg-forest-800 border-forest-700' : i === 1 ? 'bg-gold-400 border-gold-500' : ''}`}>
+                    <p className={`stat-num mb-1 ${i === 0 ? '!text-white' : i === 1 ? '!text-slate-900' : ''}`}>{s.val}</p>
+                    <p className={`text-sm font-600 font-body mb-0.5 ${i === 0 ? 'text-forest-100' : i === 1 ? 'text-slate-800' : 'text-slate-700 dark:text-slate-200'}`}>{s.label}</p>
+                    <p className={`text-xs ${i === 0 ? 'text-forest-300' : i === 1 ? 'text-slate-700' : 'text-slate-400'}`}>{s.sub}</p>
+                  </div>
+                ))}
+              </div>
+              {/* Feature badges */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {['Home Collection Available','Certified Phlebotomists','Reports in 24hrs','AI Health Insights'].map(f => (
+                  <span key={f} className="flex items-center gap-1.5 text-xs font-500 text-forest-700 dark:text-forest-300 bg-forest-50 dark:bg-forest-950 border border-forest-100 dark:border-forest-800 px-3 py-1.5 rounded-full">
+                    <CheckCircle2 className="w-3 h-3" /> {f}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CATEGORIES */}
-      <section className="py-16 bg-cream-50 dark:bg-forest-950">
-        <div className="max-w-7xl mx-auto px-4">
+      {/* ── CATEGORIES ───────────────────────────────────────── */}
+      <section className="py-14 bg-slate-50 dark:bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <p className="font-body text-xs font-600 text-gold-500 uppercase tracking-widest mb-1">Browse By Category</p>
-              <h2 className="font-display text-2xl sm:text-3xl font-700 text-forest-900 dark:text-cream-100">Find Tests by Health Concern</h2>
+              <p className="section-label mb-1">Browse by Health Concern</p>
+              <h2 className="font-display text-2xl font-700 text-slate-900 dark:text-white">Find the Right Test</h2>
             </div>
-            <Link href="/tests" className="hidden sm:flex items-center gap-1 text-sm font-body font-500 text-forest-600 dark:text-forest-400 hover:text-gold-500 transition-colors">
+            <Link href="/tests" className="hidden sm:flex items-center gap-1 text-sm font-500 text-forest-700 dark:text-forest-300 hover:underline">
               All Tests <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
             {CATEGORIES.map(c => (
               <Link key={c.q} href={`/tests?q=${c.q}`}
-                className="card-3d group flex flex-col items-center gap-2.5 p-4 bg-white dark:bg-forest-900/40 rounded-2xl border border-forest-100/60 dark:border-forest-800/60 hover:border-gold-400/40 transition-all text-center">
-                <div className={`w-11 h-11 ${c.bg} rounded-xl flex items-center justify-center`}>
-                  <c.icon className={`w-5 h-5 ${c.color}`} />
+                className="card flex flex-col items-center gap-2.5 p-4 hover:border-forest-200 dark:hover:border-forest-700 text-center group">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{background: c.bg}}>
+                  <c.icon className="w-5 h-5" style={{color: c.color}} />
                 </div>
-                <span className="font-body text-xs font-500 text-forest-800 dark:text-cream-200 leading-tight">{c.label}</span>
+                <span className="text-xs font-500 text-slate-700 dark:text-slate-300 leading-tight">{c.label}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* POPULAR TESTS */}
+      {/* ── POPULAR TESTS ─────────────────────────────────────── */}
       {tests.length > 0 && (
-        <section className="py-16 bg-white dark:bg-forest-900/20">
-          <div className="max-w-7xl mx-auto px-4">
+        <section className="py-14 bg-white dark:bg-slate-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <p className="font-body text-xs font-600 text-gold-500 uppercase tracking-widest mb-1">Most Booked</p>
-                <h2 className="font-display text-2xl sm:text-3xl font-700 text-forest-900 dark:text-cream-100">Popular Tests</h2>
+                <p className="section-label mb-1">Most Booked</p>
+                <h2 className="font-display text-2xl font-700 text-slate-900 dark:text-white">Popular Tests</h2>
               </div>
-              <Link href="/tests" className="flex items-center gap-1 text-sm font-body font-500 text-forest-600 dark:text-forest-400 hover:text-gold-500 transition-colors">
+              <Link href="/tests" className="flex items-center gap-1 text-sm font-500 text-forest-700 dark:text-forest-300 hover:underline">
                 View All <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {tests.slice(0, 8).map((t: any) => {
                 const name = t.test_parameter?.split('\n')[0]?.trim() || t.description?.split('\n')[0]?.trim() || 'Test';
+                const isProfile = t.type === 'PROFILE';
                 return (
-                  <div key={t.id} className="card-3d glass-card rounded-2xl p-5 group">
-                    <span className={`inline-block text-[10px] font-body font-600 px-2 py-0.5 rounded-full mb-2 uppercase tracking-wide ${t.type === 'PROFILE' ? 'bg-gold-50 text-gold-600 dark:bg-gold-500/20 dark:text-gold-400' : 'bg-forest-50 text-forest-700 dark:bg-forest-900/50 dark:text-forest-300'}`}>
-                      {t.type === 'PROFILE' ? 'Panel' : 'Test'}
+                  <div key={t.id} className="card p-5 flex flex-col">
+                    <span className={`badge self-start mb-3 ${isProfile ? 'badge-gold' : 'badge-green'}`}>
+                      {isProfile ? 'Panel' : 'Test'}
                     </span>
-                    <h3 className="font-body font-600 text-sm text-forest-900 dark:text-cream-100 line-clamp-2 mb-2">{name}</h3>
-                    <div className="flex items-center justify-between mt-3">
-                      <p className="font-display font-700 text-lg text-forest-900 dark:text-gold-400">₹{t.mrp}</p>
-                      <Link href={`/tests/${t.id}`} className="text-xs font-body font-500 text-forest-600 dark:text-forest-400 hover:text-gold-500 flex items-center gap-0.5">
+                    <h3 className="text-sm font-600 text-slate-800 dark:text-slate-200 line-clamp-2 mb-2 flex-1 font-body leading-snug">{name}</h3>
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <span className="font-display text-xl font-700 text-forest-800 dark:text-forest-300">₹{t.mrp}</span>
+                      <Link href={`/tests/${t.id}`}
+                        className="text-xs font-600 text-forest-700 dark:text-forest-300 hover:text-forest-900 dark:hover:text-forest-100 flex items-center gap-1 transition-colors">
                         Book <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
@@ -198,35 +176,43 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* PACKAGES */}
+      {/* ── PACKAGES ──────────────────────────────────────────── */}
       {packages.length > 0 && (
-        <section className="py-16 bg-cream-50 dark:bg-forest-950">
-          <div className="max-w-7xl mx-auto px-4">
+        <section className="py-14 bg-slate-50 dark:bg-slate-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <p className="font-body text-xs font-600 text-gold-500 uppercase tracking-widest mb-1">Preventive Care</p>
-                <h2 className="font-display text-2xl sm:text-3xl font-700 text-forest-900 dark:text-cream-100">Health Packages</h2>
+                <p className="section-label mb-1">Preventive Care</p>
+                <h2 className="font-display text-2xl font-700 text-slate-900 dark:text-white">Health Packages</h2>
               </div>
-              <Link href="/packages" className="flex items-center gap-1 text-sm font-body font-500 text-forest-600 dark:text-forest-400 hover:text-gold-500 transition-colors">
+              <Link href="/packages" className="flex items-center gap-1 text-sm font-500 text-forest-700 dark:text-forest-300 hover:underline">
                 All Packages <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {packages.slice(0, 6).map((p: any) => {
                 const name = p.test_parameter?.split('\n')[0]?.trim() || 'Health Package';
+                const items = p.description?.replace(/\[X\]/g,'')?.split('\n')?.filter(Boolean).slice(0,4) || [];
                 return (
-                  <div key={p.id} className="card-3d bg-white dark:bg-forest-900/40 rounded-2xl border border-forest-100 dark:border-forest-800 overflow-hidden group">
-                    <div className="h-1.5 bg-gradient-to-r from-forest-600 to-gold-400" />
-                    <div className="p-5">
-                      <span className="inline-block text-[10px] font-body font-600 px-2 py-0.5 rounded-full bg-gold-50 text-gold-600 dark:bg-gold-500/20 dark:text-gold-400 uppercase tracking-wide mb-2">Package</span>
-                      <h3 className="font-body font-600 text-sm text-forest-900 dark:text-cream-100 line-clamp-2 mb-1">{name}</h3>
-                      {p.description && (
-                        <p className="font-body text-xs text-forest-500 dark:text-forest-400 line-clamp-2 mb-3">{p.description.replace(/\[X\]/g,'').trim()}</p>
+                  <div key={p.id} className="card overflow-hidden flex flex-col">
+                    <div className="h-1 bg-forest-800" />
+                    <div className="p-5 flex flex-col flex-1">
+                      <span className="badge badge-gold self-start mb-3">Health Package</span>
+                      <h3 className="text-sm font-600 text-slate-800 dark:text-slate-200 mb-2 font-body leading-snug">{name}</h3>
+                      {items.length > 0 && (
+                        <ul className="space-y-1.5 mb-4 flex-1">
+                          {items.map((item: string, i: number) => (
+                            <li key={i} className="flex items-start gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-forest-600 mt-0.5 flex-shrink-0" />
+                              <span className="text-xs text-slate-500 dark:text-slate-400 leading-tight">{item.trim()}</span>
+                            </li>
+                          ))}
+                        </ul>
                       )}
-                      <div className="flex items-center justify-between pt-3 border-t border-forest-50 dark:border-forest-800">
-                        <p className="font-display font-700 text-xl text-forest-900 dark:text-gold-400">₹{p.mrp}</p>
-                        <Link href={`/packages/${p.id}`} className="btn-gold text-forest-950 font-body font-600 text-xs px-4 py-2 rounded-xl flex items-center gap-1">
-                          Book <ArrowRight className="w-3 h-3" />
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800 mt-auto">
+                        <span className="font-display text-2xl font-700 text-forest-800 dark:text-forest-300">₹{p.mrp}</span>
+                        <Link href={`/tests/${p.id}`} className="btn-primary text-xs py-2 px-4">
+                          Book <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
                     </div>
@@ -238,92 +224,115 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* HOW IT WORKS */}
-      <section className="py-16 bg-gradient-to-br from-forest-900 to-forest-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5" style={{backgroundImage:'linear-gradient(#F4B942 1px, transparent 1px), linear-gradient(90deg, #F4B942 1px, transparent 1px)', backgroundSize:'40px 40px'}} />
-        <div className="relative max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <p className="font-body text-xs font-600 text-gold-400 uppercase tracking-widest mb-2">Simple Process</p>
-            <h2 className="font-display text-2xl sm:text-3xl font-700 text-white">How It Works</h2>
+      {/* ── HOW IT WORKS ──────────────────────────────────────── */}
+      <section className="py-14 bg-forest-800 dark:bg-forest-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10">
+            <p className="text-xs font-600 text-gold-400 uppercase tracking-wider font-body mb-2">Simple Process</p>
+            <h2 className="font-display text-2xl font-700 text-white">How It Works</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {STEPS.map((s, i) => (
-              <div key={i} className="relative">
-                {i < 2 && <div className="hidden md:block absolute top-10 left-full w-full h-px bg-gradient-to-r from-gold-400/40 to-transparent z-10" />}
-                <div className="glass-card rounded-2xl p-6 text-center">
-                  <div className="w-14 h-14 bg-gold-400/10 border border-gold-400/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <s.icon className="w-6 h-6 text-gold-400" />
-                  </div>
-                  <span className="font-display text-3xl font-800 text-gold-400/20">{s.n}</span>
-                  <h3 className="font-display text-lg font-700 text-white mt-1 mb-2">{s.title}</h3>
-                  <p className="font-body text-sm text-cream-100/60 leading-relaxed">{s.desc}</p>
+              <div key={i} className="relative text-center p-6 rounded-xl bg-white/5 border border-white/10">
+                <div className="w-12 h-12 bg-gold-400/20 border border-gold-400/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <s.icon className="w-5 h-5 text-gold-400" />
                 </div>
+                <div className="w-7 h-7 bg-gold-400 rounded-full flex items-center justify-center mx-auto mb-3 -mt-2">
+                  <span className="text-xs font-700 text-slate-900 font-body">{s.n}</span>
+                </div>
+                <h3 className="font-display text-lg font-600 text-white mb-2">{s.title}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* WHY NHCARE */}
-      <section className="py-16 bg-white dark:bg-forest-900/20">
-        <div className="max-w-7xl mx-auto px-4">
+      {/* ── WHY NHCARE ────────────────────────────────────────── */}
+      <section className="py-14 bg-white dark:bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="font-body text-xs font-600 text-gold-500 uppercase tracking-widest mb-2">Why Choose Us</p>
-              <h2 className="font-display text-3xl sm:text-4xl font-700 text-forest-900 dark:text-cream-100 mb-6">Diagnostic Excellence for 25+ Years</h2>
-              <p className="font-body text-forest-600 dark:text-forest-300 text-base leading-relaxed mb-8">Niramaya Healthcare has been Delhi-NCR&apos;s trusted pathology partner since 1999. Now NHCare brings the same NABL-accredited excellence to your smartphone — with AI-powered insights.</p>
-              <ul className="space-y-4">
+              <p className="section-label mb-2">Why Choose Us</p>
+              <h2 className="font-display text-3xl font-700 text-slate-900 dark:text-white mb-5">
+                25+ Years of Diagnostic Excellence
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+                Niramaya Healthcare has been Delhi-NCR&apos;s trusted pathology partner since 1999. NHCare brings the same NABL-accredited excellence to your smartphone, with AI-powered insights that help you understand your health better.
+              </p>
+              <div className="space-y-4">
                 {[
-                  ['NABL Accredited Lab', 'MC-2140 — highest quality pathology standards'],
-                  ['Home Sample Collection', 'Certified phlebotomists at your doorstep, 7am-9pm'],
-                  ['AI-Powered Reports', 'Plain language explanations by GPT-4o'],
-                  ['24-Hour Turnaround', 'Most reports ready within one business day'],
-                  ['490+ Partner Labs', 'Coverage across entire Delhi-NCR'],
-                ].map(([title, desc]) => (
-                  <li key={title} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-body font-600 text-sm text-forest-900 dark:text-cream-100">{title}</p>
-                      <p className="font-body text-xs text-forest-500 dark:text-forest-400">{desc}</p>
+                  { icon: Shield, title: 'NABL Accredited Lab', desc: 'MC-2140 certified — the highest standard in diagnostic quality' },
+                  { icon: Home, title: 'Home Sample Collection', desc: 'Certified phlebotomists visit your home, 7AM to 9PM daily' },
+                  { icon: Brain, title: 'AI-Powered Reports', desc: 'Plain-language explanation of your results powered by GPT-4o' },
+                  { icon: Clock, title: '24-Hour Turnaround', desc: 'Most test reports ready within one business day' },
+                  { icon: MapPin, title: '490+ Partner Labs', desc: 'Wide coverage across all Delhi-NCR pincodes' },
+                ].map(item => (
+                  <div key={item.title} className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-forest-50 dark:bg-forest-950 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <item.icon className="w-4 h-4 text-forest-700 dark:text-forest-400" />
                     </div>
-                  </li>
+                    <div>
+                      <p className="text-sm font-600 text-slate-800 dark:text-slate-200 font-body">{item.title}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{item.desc}</p>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { val: '663K+', label: 'Happy Patients', col: 'from-forest-600 to-forest-800' },
-                { val: '24hr', label: 'Report Delivery', col: 'from-gold-400 to-gold-600' },
-                { val: '490+', label: 'Partner Labs', col: 'from-forest-700 to-forest-900' },
-                { val: '99.2%', label: 'Accuracy Rate', col: 'from-gold-500 to-amber-600' },
-              ].map(s => (
-                <div key={s.label} className={`card-3d bg-gradient-to-br ${s.col} rounded-2xl p-6 text-center`}>
-                  <p className="font-display text-3xl font-800 text-white mb-1">{s.val}</p>
-                  <p className="font-body text-xs text-white/70">{s.label}</p>
+            <div className="space-y-4">
+              {/* Feature highlight cards */}
+              <div className="card p-6 border-l-4 border-l-forest-600">
+                <div className="flex items-center gap-3 mb-2">
+                  <FlaskConical className="w-5 h-5 text-forest-600" />
+                  <h3 className="font-display text-lg font-600 text-slate-900 dark:text-white">AI Lab Report Analysis</h3>
                 </div>
-              ))}
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Our AI reads your lab results and explains them in simple language — no medical degree needed. Know what&apos;s high, low, and what it means for you.</p>
+                <Link href="/dashboard/reports" className="inline-flex items-center gap-1 text-xs font-600 text-forest-700 dark:text-forest-300 mt-3 hover:underline">
+                  View Sample Report <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+              <div className="card p-6 border-l-4 border-l-gold-400">
+                <div className="flex items-center gap-3 mb-2">
+                  <Home className="w-5 h-5 text-gold-500" />
+                  <h3 className="font-display text-lg font-600 text-slate-900 dark:text-white">Home Collection</h3>
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Enter your pincode to check same-day home collection availability. Our phlebotomist brings all sterile equipment — completely free of charge.</p>
+                <Link href="/home-collection" className="inline-flex items-center gap-1 text-xs font-600 text-gold-600 dark:text-gold-400 mt-3 hover:underline">
+                  Check Your Pincode <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[{val:'99.2%',label:'Accuracy Rate'},{val:'Free',label:'Home Visit'}].map(s=>(
+                  <div key={s.label} className="card p-4 text-center">
+                    <p className="font-display text-2xl font-700 text-forest-800 dark:text-forest-300">{s.val}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-body">{s.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* HOME COLLECTION CTA */}
-      <section className="py-16 bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage:'radial-gradient(circle at 20% 50%, white 0%, transparent 50%), radial-gradient(circle at 80% 20%, white 0%, transparent 40%)'}} />
-        <div className="relative max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Home className="w-5 h-5 text-forest-900" />
-              <span className="font-body text-sm font-600 text-forest-900 uppercase tracking-wider">Home Collection Available</span>
+      {/* ── HOME COLLECTION CTA ───────────────────────────────── */}
+      <section className="py-12 bg-gold-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-slate-900/10 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Home className="w-6 h-6 text-slate-900" />
             </div>
-            <h2 className="font-display text-2xl sm:text-3xl font-800 text-forest-950 mb-2">Sample Collected at Your Door</h2>
-            <p className="font-body text-forest-800/80 text-sm">Enter your pincode to check availability · 7AM–9PM · Certified Phlebotomists</p>
+            <div>
+              <p className="text-xs font-600 text-slate-700 uppercase tracking-wider font-body mb-0.5">Home Collection Available</p>
+              <h2 className="font-display text-2xl font-700 text-slate-900 mb-1">Sample Collected at Your Door</h2>
+              <p className="text-sm text-slate-700">Enter your pincode to check availability · 7AM–9PM · Certified Phlebotomists</p>
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
-            <Link href="/home-collection" className="btn-forest text-white font-body font-700 px-7 py-3.5 rounded-xl flex items-center gap-2">
+          <div className="flex gap-3 flex-shrink-0">
+            <Link href="/home-collection" className="btn-primary text-sm px-6 py-3 whitespace-nowrap">
               Book Home Collection <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link href="/centers" className="bg-white text-forest-900 font-body font-600 px-7 py-3.5 rounded-xl flex items-center gap-2 hover:bg-forest-50 transition-colors">
+            <Link href="/centers" className="bg-white text-slate-800 font-600 text-sm px-6 py-3 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 whitespace-nowrap">
               <Star className="w-4 h-4" /> Our Centers
             </Link>
           </div>
