@@ -19,6 +19,10 @@ export default function ReportDetailPage({ params }:{params:{id:string}}) {
     api.reports.get(parseInt(params.id),token).then(r=>setReport(r.data)).catch(()=>{}).finally(()=>setLoading(false));
   },[params.id,router]);
 
+  const downloadPdf=()=>{
+    const t=localStorage.getItem('nhcare_token')||'';
+    window.open(`https://api.uat.medibridge24x7.com/api/v1/niramaya/reports/${params.id}/pdf`,'_blank');
+  };
   const loadAI=async()=>{
     const token=localStorage.getItem('nhcare_token');
     if(!token||aiLoading)return;
@@ -79,11 +83,19 @@ export default function ReportDetailPage({ params }:{params:{id:string}}) {
               <Brain className="w-5 h-5" style={{color:'#1B4D3E'}} />
               <h2 className="font-display font-700 text-[18px]" style={{color:'var(--text-1)'}}>AI Health Summary</h2>
             </div>
-            {!aiSummary && (
+            <div style={{display:'flex',gap:'8px'}}>
+              {!aiSummary && (
               <button onClick={loadAI} disabled={aiLoading} className="btn btn-green text-[12px] py-2 px-4">
                 {aiLoading?<><Loader2 className="w-3.5 h-3.5 animate-spin"/>Analysing...</>:<>✦ Generate</>}
               </button>
-            )}
+              )}
+              <button onClick={downloadPdf}
+                style={{display:'inline-flex',alignItems:'center',gap:'4px',padding:'7px 12px',
+                  borderRadius:'8px',border:'1px solid var(--border)',background:'var(--bg)',
+                  color:'var(--text-2)',fontSize:'12px',fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif'}}>
+                ⬇ PDF
+              </button>
+            </div>
           </div>
           <div className="p-5">
             {aiSummary

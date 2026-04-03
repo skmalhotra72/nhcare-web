@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Calendar, FileText, Activity, User, LogOut, ArrowRight, Loader2, ChevronRight } from 'lucide-react';
+import { Calendar, FileText, Activity, User, Users, Star, LogOut, ArrowRight, Loader2, ChevronRight } from 'lucide-react';
 import { api } from '@/lib/api';
 
 export default function DashboardPage() {
@@ -53,12 +53,14 @@ export default function DashboardPage() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {/* Quick nav */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
           {[
             {icon:Calendar, label:'My Bookings', href:'/dashboard/bookings', count:bookings.length},
             {icon:FileText, label:'My Reports', href:'/dashboard/reports', count:reports.length},
             {icon:Activity, label:'Book Test', href:'/tests', count:null},
             {icon:User, label:'My Profile', href:'/dashboard/profile', count:null},
+            {icon:Users, label:'Family', href:'/dashboard/family', count:null},
+            {icon:Star, label:'Offers', href:'/special-offers', count:null},
           ].map(item=>(
             <Link key={item.href} href={item.href} className="card lift flex flex-col items-center gap-2.5 p-5 text-center">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{background:'var(--green-bg)'}}>
