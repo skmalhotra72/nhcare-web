@@ -375,6 +375,182 @@ export default async function Page() {
         </div>
       </section>
 
+
+      {/* ── SPECIAL OFFERS SECTION ─────────────────────── */}
+      <section className="py-16" style={{background:'var(--bg-2)'}}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <p className="label mb-1.5">Limited Time</p>
+              <h2 className="font-display font-700 leading-tight" style={{fontSize:'32px',color:'var(--text-1)'}}>
+                Family Health Packages
+              </h2>
+              <p className="text-[14px] font-body mt-2" style={{color:'var(--text-3)'}}>
+                9 packages · Up to 81% off · Free home collection
+              </p>
+            </div>
+            <Link href="/special-offers" className="hidden sm:flex items-center gap-1.5 text-[13px] font-body font-600 transition-colors" style={{color:'#1B4D3E'}}>
+              All 9 Packages <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Featured packages row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {[
+              {emoji:'💑',name:'Couple Package',tests:224,price:4499,market:24000,slug:'couple-health-package',color:'#F4B942',badge:'🔥 NEW'},
+              {emoji:'💪',name:'Male Health',tests:112,price:2999,market:12000,slug:'male-health-package',color:'#1B4D3E',badge:'PREMIUM'},
+              {emoji:'🌸',name:'Female Health',tests:112,price:2999,market:12000,slug:'female-health-package',color:'#ec4899',badge:'PREMIUM'},
+              {emoji:'👨‍👩‍👧‍👦',name:'Family Bundle',tests:500,price:9999,market:45000,slug:'family-bundle',color:'#1B4D3E',badge:'BEST DEAL'},
+            ].map(p=>(
+              <Link key={p.slug} href={`/special-offers/${p.slug}`}
+                className="card lift overflow-hidden block" style={{textDecoration:'none'}}>
+                <div style={{height:'3px',background:p.color}} />
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <span style={{fontSize:'11px',fontWeight:700,padding:'3px 10px',borderRadius:'100px',background:`${p.color}18`,color:p.color,border:`1px solid ${p.color}30`,fontFamily:'Inter,sans-serif'}}>{p.badge}</span>
+                    <span style={{fontSize:'32px',lineHeight:1}} className="float-2">{p.emoji}</span>
+                  </div>
+                  <h3 className="font-body font-700 text-[14px] mb-1" style={{color:'var(--text-1)'}}>{p.name}</h3>
+                  <p className="text-[11px] font-body mb-3" style={{color:'var(--text-4)'}}>{p.tests} tests covered</p>
+                  <div className="flex items-center justify-between pt-3" style={{borderTop:'1px solid var(--border)'}}>
+                    <div>
+                      <p className="text-[11px] font-body line-through" style={{color:'var(--text-4)'}}>₹{p.market.toLocaleString()}</p>
+                      <p className="font-display font-700 text-[22px]" style={{color:'var(--text-1)'}}>₹{p.price.toLocaleString()}</p>
+                    </div>
+                    <span style={{fontSize:'11px',fontWeight:700,background:'#dc2626',color:'white',padding:'2px 8px',borderRadius:'100px',fontFamily:'Inter,sans-serif'}}>{Math.round(((p.market-p.price)/p.market)*100)}% OFF</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Offer banner */}
+          <div className="relative overflow-hidden rounded-2xl p-6 sm:p-8"
+            style={{background:'linear-gradient(135deg,#0D2B1E,#1B4D3E)'}}>
+            <div style={{position:'absolute',top:'-40px',right:'-40px',width:'200px',height:'200px',background:'radial-gradient(circle,rgba(244,185,66,0.12) 0%,transparent 70%)',borderRadius:'50%',pointerEvents:'none'}} />
+            {['💊','🩺','🔬','💉'].map((e,i)=>(
+              <div key={i} className={`float-${(i%3)+1}`} style={{position:'absolute',fontSize:'20px',opacity:0.07,top:`${20+i*20}%`,left:`${i%2===0?2+i*3:82+i}%`,pointerEvents:'none'}}>{e}</div>
+            ))}
+            <div className="relative flex flex-col sm:flex-row items-center justify-between gap-5">
+              <div>
+                <p className="font-body font-700 text-[11px] uppercase tracking-widest mb-1" style={{color:'rgba(244,185,66,0.8)'}}>सर्वे सन्तु निरामयः · May all be free from illness</p>
+                <h3 className="font-display font-700 text-white mb-1" style={{fontSize:'24px'}}>9 Family Packages — Up to 81% Off</h3>
+                <p className="text-[13px] font-body" style={{color:'rgba(255,255,255,0.55)'}}>
+                  Basic · Complete · Male · Female · <strong style={{color:'#F4B942'}}>Couple (NEW!)</strong> · Teen Boys · Teen Girls · Kids · Family Bundle
+                </p>
+              </div>
+              <Link href="/special-offers" className="btn flex-shrink-0"
+                style={{background:'#F4B942',color:'#0f172a',fontWeight:700,fontSize:'14px',padding:'12px 28px',borderRadius:'10px',textDecoration:'none',whiteSpace:'nowrap',display:'inline-flex',alignItems:'center',gap:'8px'}}>
+                View All Packages <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ABOUT US SECTION ───────────────────────────── */}
+      <section className="py-16" style={{background:'var(--bg)'}}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+
+            {/* Left — story */}
+            <div>
+              <p className="label mb-2">Our Story</p>
+              <h2 className="font-display font-700 leading-tight mb-4" style={{fontSize:'32px',color:'var(--text-1)'}}>
+                9 Years of Diagnostic<br />Excellence
+              </h2>
+              <p className="text-[15px] font-body leading-relaxed mb-5" style={{color:'var(--text-3)'}}>
+                NirAmaya Pathlabs — the diagnostic backbone of NHCare — was founded on one belief: every Indian family deserves access to world-class pathology services at honest prices. With our Sanskrit philosophy of <em style={{color:'#1B4D3E',fontStyle:'normal',fontWeight:600}}>सर्वे सन्तु निरामयः</em> (May all be free from illness), we have grown to serve 663,000+ patients across 15 states.
+              </p>
+
+              {/* Accreditation badges */}
+              <div className="flex flex-wrap gap-3 mb-6">
+                {[
+                  {icon:'🏅',label:'NABL Accredited',sub:'MC-2140'},
+                  {icon:'🧬',label:'ICMR Approved',sub:'Molecular'},
+                  {icon:'⭐',label:'ISO 15189:2012',sub:'Certified'},
+                  {icon:'🔬',label:'7 Departments',sub:'All Certified'},
+                ].map(b=>(
+                  <div key={b.label} className="flex items-center gap-2 px-3 py-2 rounded-xl"
+                    style={{background:'var(--bg-2)',border:'1px solid var(--border)'}}>
+                    <span style={{fontSize:'18px'}}>{b.icon}</span>
+                    <div>
+                      <p className="text-[12px] font-body font-700" style={{color:'var(--text-1)'}}>{b.label}</p>
+                      <p className="text-[10px] font-body" style={{color:'var(--text-4)'}}>{b.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                {[
+                  {val:'663K+',label:'Patients Served'},
+                  {val:'500+',label:'Corporate Clients'},
+                  {val:'1000+',label:'Pincodes Covered'},
+                  {val:'15',label:'States'},
+                  {val:'200+',label:'Cities'},
+                  {val:'9+',label:'Years Excellence'},
+                ].map(s=>(
+                  <div key={s.label} className="p-3 rounded-xl text-center"
+                    style={{background:'var(--bg-2)',border:'1px solid var(--border)'}}>
+                    <p className="font-display font-700 text-[20px]" style={{color:'#1B4D3E'}}>{s.val}</p>
+                    <p className="text-[11px] font-body" style={{color:'var(--text-3)'}}>{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/about" className="btn btn-green text-[14px] px-6 py-3">
+                Our Full Story <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Right — visual */}
+            <div className="space-y-4">
+              {/* Philosophy card */}
+              <div className="relative overflow-hidden rounded-2xl p-8 text-center"
+                style={{background:'linear-gradient(135deg,#1B4D3E,#0D2B1E)'}}>
+                <div style={{position:'absolute',inset:0,opacity:0.04,backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'30px 30px'}} />
+                <div className="relative">
+                  <svg viewBox="0 0 100 80" style={{width:'80px',height:'64px',margin:'0 auto 12px',display:'block'}}>
+                    <path d="M50 5C50 5 35 20 35 33C35 41.28 41.72 48 50 48C58.28 48 65 41.28 65 33C65 20 50 5 50 5Z" fill="none" stroke="#F4B942" strokeWidth="2.5" strokeLinecap="round"/>
+                    <path d="M24 22C24 22 10 33 16 45C20 53 31 55 38 50C45 45 45 36 38 29C31 22 24 22 24 22Z" fill="none" stroke="#F4B942" strokeWidth="2" strokeLinecap="round" opacity="0.65"/>
+                    <path d="M76 22C76 22 90 33 84 45C80 53 69 55 62 50C55 45 55 36 62 29C69 22 76 22 76 22Z" fill="none" stroke="#F4B942" strokeWidth="2" strokeLinecap="round" opacity="0.65"/>
+                    <line x1="50" y1="48" x2="50" y2="72" stroke="#F4B942" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M38 69C38 69 50 74 62 69" fill="none" stroke="#F4B942" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  <p className="font-display text-[22px] text-white mb-0.5">niramaya · nhcare</p>
+                  <p className="font-body text-[14px] mb-3" style={{color:'rgba(244,185,66,0.85)',fontStyle:'italic'}}>सर्वे सन्तु निरामयः</p>
+                  <p className="font-body text-[13px]" style={{color:'rgba(255,255,255,0.45)'}}>"May all be free from illness"</p>
+                </div>
+              </div>
+
+              {/* Client logos strip */}
+              <div className="p-5 rounded-2xl" style={{background:'var(--bg-2)',border:'1px solid var(--border)'}}>
+                <p className="text-[11px] font-body font-700 uppercase tracking-wider mb-3 text-center" style={{color:'var(--text-4)'}}>Trusted by 500+ clients including</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {['TATA 1mg','MediBuddy','Panasonic','Samsung','HCL','Jio','EY','ICICI Lombard','Chaayos','Healthians'].map(c=>(
+                    <span key={c} style={{fontSize:'11px',fontWeight:600,padding:'3px 10px',borderRadius:'100px',background:'var(--bg)',border:'1px solid var(--border)',color:'var(--text-3)',fontFamily:'Inter,sans-serif'}}>{c}</span>
+                  ))}
+                  <span style={{fontSize:'11px',fontWeight:600,padding:'3px 10px',borderRadius:'100px',background:'var(--green-bg)',border:'1px solid var(--green-bd)',color:'#1B4D3E',fontFamily:'Inter,sans-serif'}}>+490 more</span>
+                </div>
+              </div>
+
+              {/* Departments */}
+              <div className="p-5 rounded-2xl" style={{background:'var(--bg-2)',border:'1px solid var(--border)'}}>
+                <p className="text-[11px] font-body font-700 uppercase tracking-wider mb-3" style={{color:'var(--text-4)'}}>7 NABL Certified Departments</p>
+                <div className="flex flex-wrap gap-2">
+                  {[['🔴','Hematology'],['🛡️','Immunoassay'],['⚗️','Biochemistry'],['🔬','Serology'],['🦠','Microbiology'],['🧬','Molecular'],['🔭','Histopathology']].map(([e,n])=>(
+                    <span key={n} style={{fontSize:'12px',fontWeight:500,padding:'4px 10px',borderRadius:'8px',background:'var(--bg)',border:'1px solid var(--border)',color:'var(--text-2)',fontFamily:'Inter,sans-serif',display:'inline-flex',alignItems:'center',gap:'4px'}}>
+                      {e} {n}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── HOME COLLECTION CTA ─────────────────────────── */}
       <section className="py-12" style={{background:'#F4B942'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-7">
