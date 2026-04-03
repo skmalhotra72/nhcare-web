@@ -1,108 +1,139 @@
 import Link from 'next/link';
-import { ArrowRight, Home, Star, Shield, Clock, Microscope, Package, Heart, Brain, Zap, Leaf, Activity, Phone, CheckCircle2, ChevronRight, MapPin, Droplets, FlaskConical } from 'lucide-react';
+import { ArrowRight, Home, Star, Shield, Clock, Microscope, Package, Heart, Brain, Zap, Leaf, Activity, CheckCircle2, ChevronRight, FlaskConical } from 'lucide-react';
 import SearchBar from '@/components/SearchBar';
 import { api } from '@/lib/api';
 
-const CATEGORIES = [
-  { icon: Heart, label: 'Heart & Cardiac', q: 'cardiac', color: '#ef4444', bg: '#fef2f2' },
-  { icon: Activity, label: 'Diabetes', q: 'diabetes', color: '#f59e0b', bg: '#fffbeb' },
-  { icon: Brain, label: 'Thyroid', q: 'thyroid', color: '#8b5cf6', bg: '#f5f3ff' },
-  { icon: Leaf, label: 'Liver', q: 'liver', color: '#10b981', bg: '#ecfdf5' },
-  { icon: Zap, label: 'Kidney', q: 'kidney', color: '#3b82f6', bg: '#eff6ff' },
-  { icon: Microscope, label: 'Blood CBC', q: 'CBC', color: '#1B4D3E', bg: '#f0f7f4' },
-  { icon: Package, label: 'Vitamins', q: 'vitamin', color: '#F4B942', bg: '#fffbeb' },
-  { icon: Shield, label: 'Full Body', q: 'full body', color: '#6366f1', bg: '#eef2ff' },
+const CATS = [
+  { icon: Heart,      label: 'Heart & Cardiac', q: 'cardiac',   ic: '#ef4444', bg: '#fef2f2', dbg: 'rgba(239,68,68,0.12)' },
+  { icon: Activity,   label: 'Diabetes',         q: 'diabetes',  ic: '#f59e0b', bg: '#fffbeb', dbg: 'rgba(245,158,11,0.12)' },
+  { icon: Brain,      label: 'Thyroid',           q: 'thyroid',   ic: '#8b5cf6', bg: '#f5f3ff', dbg: 'rgba(139,92,246,0.12)' },
+  { icon: Leaf,       label: 'Liver',             q: 'liver',     ic: '#10b981', bg: '#ecfdf5', dbg: 'rgba(16,185,129,0.12)' },
+  { icon: Zap,        label: 'Kidney',            q: 'kidney',    ic: '#3b82f6', bg: '#eff6ff', dbg: 'rgba(59,130,246,0.12)' },
+  { icon: Microscope, label: 'Blood CBC',         q: 'CBC',       ic: '#1B4D3E', bg: '#f0f7f4', dbg: 'rgba(27,77,62,0.15)' },
+  { icon: Package,    label: 'Vitamins',          q: 'vitamin',   ic: '#F4B942', bg: '#fef9ee', dbg: 'rgba(244,185,66,0.12)' },
+  { icon: Shield,     label: 'Full Body',         q: 'full body', ic: '#6366f1', bg: '#eef2ff', dbg: 'rgba(99,102,241,0.12)' },
 ];
 
 const STEPS = [
-  { n: '1', title: 'Search & Book', desc: 'Find tests by name, symptom or health condition. Book in under 2 minutes.', icon: Microscope },
-  { n: '2', title: 'Sample Collection', desc: 'Certified phlebotomist arrives at your home between 7AM–9PM.', icon: Home },
-  { n: '3', title: 'AI-Powered Report', desc: 'Digital report with plain-language AI summary delivered in 24 hours.', icon: Brain },
+  { n:'01', title:'Search & Book',       desc:'Find tests by name, symptom or condition. Book in under 2 minutes online.', icon: Microscope },
+  { n:'02', title:'Home Collection',     desc:'Our certified phlebotomist arrives at your door, 7AM to 9PM daily.', icon: Home },
+  { n:'03', title:'AI Report Ready',     desc:'Get digital reports with plain-language AI summary in 24 hours.', icon: Brain },
 ];
 
 const TRUST = [
-  { val: '663K+', label: 'Patients Served', sub: 'Since 1999' },
-  { val: '490+', label: 'Partner Labs', sub: 'Delhi-NCR' },
-  { val: '1875+', label: 'Tests Available', sub: 'All categories' },
-  { val: '24hr', label: 'Report Delivery', sub: 'Most tests' },
+  { val:'663K+', label:'Patients Served',   sub:'Since 1999',     col:'#1B4D3E', textCol:'#fff', subCol:'rgba(255,255,255,0.6)' },
+  { val:'490+',  label:'Partner Labs',      sub:'Delhi-NCR',      col:'#F4B942', textCol:'#0f172a', subCol:'rgba(15,23,42,0.6)' },
+  { val:'1875+', label:'Tests Available',   sub:'All categories', col:null,       textCol:null,     subCol:null },
+  { val:'24hr',  label:'Report Delivery',   sub:'Most tests',     col:null,       textCol:null,     subCol:null },
 ];
 
-async function getTests() {
-  try { const r = await api.tests.list('', 8); return r.data || []; } catch { return []; }
-}
-async function getPackages() {
-  try { const r = await api.packages.list('', 6); return r.data || []; } catch { return []; }
+const WHY = [
+  { icon: Shield,      title:'NABL Accredited',      desc:'MC-2140 — highest standard in diagnostic quality' },
+  { icon: Home,        title:'Free Home Collection',  desc:'Certified phlebotomists, 7AM–9PM, no extra charge' },
+  { icon: Brain,       title:'AI-Powered Reports',    desc:'GPT-4o explains your results in plain language' },
+  { icon: Clock,       title:'24-Hour Turnaround',    desc:'Most reports ready within one business day' },
+  { icon: FlaskConical,title:'NABL-Grade Accuracy',   desc:'99.2% accuracy across 1,875+ test parameters' },
+  { icon: Star,        title:'25+ Years Trust',       desc:'Delhi-NCR\'s trusted pathology partner since 1999' },
+];
+
+async function getData() {
+  const [t, p] = await Promise.all([
+    api.tests.list('',8).catch(()=>({data:[]})),
+    api.packages.list('',6).catch(()=>({data:[]})),
+  ]);
+  return { tests: t.data||[], packages: p.data||[] };
 }
 
-export default async function HomePage() {
-  const [tests, packages] = await Promise.all([getTests(), getPackages()]);
+export default async function Page() {
+  const { tests, packages } = await getData();
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{background:'var(--bg)'}}>
 
-      {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative pt-28 pb-16 bg-white dark:bg-slate-900 overflow-hidden">
-        {/* Subtle background accent */}
-        <div className="absolute top-0 right-0 w-[480px] h-[480px] bg-forest-50 dark:bg-forest-950/30 rounded-full -translate-y-32 translate-x-32 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold-400/5 rounded-full translate-y-16 -translate-x-16 pointer-events-none" />
+      {/* ── HERO ─────────────────────────────────────────── */}
+      <section className="relative overflow-hidden pt-10 pb-20" style={{background:'var(--bg)'}}>
+        {/* Ambient glows — dark mode only */}
+        <div className="dark:block hidden absolute top-[-100px] left-[-100px] w-[500px] h-[500px] pointer-events-none"
+          style={{background:'radial-gradient(circle,rgba(27,77,62,0.18) 0%,transparent 70%)',borderRadius:'50%'}} />
+        <div className="dark:block hidden absolute top-20 right-[-80px] w-[320px] h-[320px] pointer-events-none"
+          style={{background:'radial-gradient(circle,rgba(244,185,66,0.07) 0%,transparent 70%)',borderRadius:'50%'}} />
+        {/* Light mode — subtle green tint top-right */}
+        <div className="dark:hidden absolute top-0 right-0 w-[500px] h-[400px] pointer-events-none"
+          style={{background:'radial-gradient(ellipse at top right,rgba(27,77,62,0.05) 0%,transparent 60%)'}} />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-14 items-center">
+            {/* Left */}
             <div>
-              {/* NABL badge */}
-              <div className="inline-flex items-center gap-2 bg-forest-50 dark:bg-forest-950 border border-forest-100 dark:border-forest-800 rounded-full px-4 py-1.5 mb-6">
-                <div className="w-2 h-2 bg-forest-600 rounded-full" />
-                <span className="text-xs font-600 text-forest-700 dark:text-forest-300 font-body tracking-wide">NABL Accredited · ISO 15189:2012 Certified</span>
+              {/* NABL pill */}
+              <div className="inline-flex items-center gap-2 mb-6 badge badge-green">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-800 dark:bg-green-400 animate-pulse" />
+                NABL Accredited · ISO 15189:2012 Certified
               </div>
 
-              <h1 className="font-display text-4xl sm:text-5xl font-700 text-slate-900 dark:text-white leading-tight mb-5">
+              <h1 className="font-display font-700 leading-[1.12] mb-5 text-[42px] sm:text-[52px]"
+                style={{color:'var(--text-1)'}}>
                 Diagnostic Tests<br />
-                <span className="text-forest-800 dark:text-forest-300">at Your Doorstep</span>
+                <span className="grad-text">at Your Doorstep</span>
               </h1>
-              <p className="text-base text-slate-500 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">
-                NABL-certified lab tests with home sample collection. Get AI-powered plain-language reports in 24 hours. Trusted by 663,000+ patients across Delhi-NCR since 1999.
+
+              <p className="mb-7 text-[15px] max-w-lg" style={{color:'var(--text-3)',lineHeight:'1.75'}}>
+                NABL-certified lab tests with home sample collection. AI-powered plain-language reports delivered in 24 hours. Trusted by 663,000+ patients across Delhi-NCR.
               </p>
 
               {/* Search */}
-              <div className="mb-6 max-w-xl">
+              <div className="mb-5 max-w-xl">
                 <SearchBar large />
               </div>
 
-              {/* Popular searches */}
+              {/* Popular tags */}
               <div className="flex flex-wrap items-center gap-2 mb-8">
-                <span className="text-xs text-slate-400 font-body">Popular:</span>
-                {['CBC', 'HbA1c', 'Thyroid TSH', 'Vitamin D', 'Lipid Profile'].map(t => (
+                <span className="text-[11px] font-body" style={{color:'var(--text-4)'}}>Popular:</span>
+                {['CBC','HbA1c','Thyroid TSH','Vitamin D','Lipid Profile'].map(t => (
                   <Link key={t} href={`/tests?q=${t}`}
-                    className="text-xs font-500 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-forest-50 dark:hover:bg-forest-950 hover:text-forest-700 dark:hover:text-forest-300 px-3 py-1 rounded-full transition-all border border-slate-200 dark:border-slate-700">
-                    {t}
-                  </Link>
+                    className="popular-tag text-[12px] font-body font-500 px-3 py-1 rounded-full transition-all"
+                  >{t}</Link>
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/tests" className="btn-primary text-sm px-6 py-3">
+              <div className="flex flex-wrap gap-3">
+                <Link href="/tests" className="btn btn-green text-[14px] px-7 py-3">
                   Browse All Tests <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link href="/home-collection" className="btn-outline text-sm px-6 py-3">
+                <Link href="/home-collection" className="btn btn-ghost text-[14px] px-6 py-3">
                   <Home className="w-4 h-4" /> Home Collection
                 </Link>
               </div>
             </div>
 
-            {/* Hero visual — stats card grid */}
-            <div className="hidden lg:block">
-              <div className="grid grid-cols-2 gap-4">
-                {TRUST.map((s, i) => (
-                  <div key={s.label} className={`card p-6 ${i === 0 ? 'bg-forest-800 border-forest-700' : i === 1 ? 'bg-gold-400 border-gold-500' : ''}`}>
-                    <p className={`stat-num mb-1 ${i === 0 ? '!text-white' : i === 1 ? '!text-slate-900' : ''}`}>{s.val}</p>
-                    <p className={`text-sm font-600 font-body mb-0.5 ${i === 0 ? 'text-forest-100' : i === 1 ? 'text-slate-800' : 'text-slate-700 dark:text-slate-200'}`}>{s.label}</p>
-                    <p className={`text-xs ${i === 0 ? 'text-forest-300' : i === 1 ? 'text-slate-700' : 'text-slate-400'}`}>{s.sub}</p>
-                  </div>
-                ))}
-              </div>
-              {/* Feature badges */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {['Home Collection Available','Certified Phlebotomists','Reports in 24hrs','AI Health Insights'].map(f => (
-                  <span key={f} className="flex items-center gap-1.5 text-xs font-500 text-forest-700 dark:text-forest-300 bg-forest-50 dark:bg-forest-950 border border-forest-100 dark:border-forest-800 px-3 py-1.5 rounded-full">
+            {/* Right — stat cards */}
+            <div className="hidden lg:grid grid-cols-2 gap-3">
+              {TRUST.map((s, i) => (
+                <div key={s.label} className="lift rounded-[14px] p-6"
+                  style={{
+                    background: s.col ? s.col : 'var(--surface)',
+                    border: s.col ? 'none' : '1px solid var(--border)',
+                    boxShadow: s.col ? '0 4px 20px rgba(0,0,0,0.15)' : 'var(--shadow-sm)',
+                    backdropFilter: !s.col ? 'blur(20px)' : undefined,
+                  }}>
+                  <p className="font-display font-700 text-[34px] leading-none mb-1.5"
+                    style={{color: s.textCol ?? 'var(--text-1)'}}>
+                    {s.val}
+                  </p>
+                  <p className="font-body font-600 text-[14px] mb-0.5"
+                    style={{color: s.textCol ?? 'var(--text-2)'}}>
+                    {s.label}
+                  </p>
+                  <p className="font-body text-[12px]"
+                    style={{color: s.subCol ?? 'var(--text-4)'}}>
+                    {s.sub}
+                  </p>
+                </div>
+              ))}
+              {/* Feature chips */}
+              <div className="col-span-2 flex flex-wrap gap-2 mt-1">
+                {['Home Collection','Certified Phlebotomists','Reports in 24hrs','AI Health Insights'].map(f => (
+                  <span key={f} className="badge badge-green text-[11px]">
                     <CheckCircle2 className="w-3 h-3" /> {f}
                   </span>
                 ))}
@@ -112,59 +143,67 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── CATEGORIES ───────────────────────────────────────── */}
-      <section className="py-14 bg-slate-50 dark:bg-slate-900/50">
+      {/* ── CATEGORIES ─────────────────────────────────── */}
+      <section className="py-14" style={{background:'var(--bg-2)'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <p className="section-label mb-1">Browse by Health Concern</p>
-              <h2 className="font-display text-2xl font-700 text-slate-900 dark:text-white">Find the Right Test</h2>
+              <p className="label mb-1.5">Browse by Health Concern</p>
+              <h2 className="font-display text-[26px] font-700" style={{color:'var(--text-1)'}}>Find the Right Test</h2>
             </div>
-            <Link href="/tests" className="hidden sm:flex items-center gap-1 text-sm font-500 text-forest-700 dark:text-forest-300 hover:underline">
+            <Link href="/tests" className="hidden sm:flex items-center gap-1 text-[13px] font-body font-500 transition-colors"
+              style={{color:'var(--text-3)'}}>
               All Tests <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {CATEGORIES.map(c => (
+            {CATS.map(c => (
               <Link key={c.q} href={`/tests?q=${c.q}`}
-                className="card flex flex-col items-center gap-2.5 p-4 hover:border-forest-200 dark:hover:border-forest-700 text-center group">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{background: c.bg}}>
-                  <c.icon className="w-5 h-5" style={{color: c.color}} />
+                className="card lift flex flex-col items-center gap-2.5 p-4 text-center group cursor-pointer">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center transition-all"
+                  style={{background: c.bg}}>
+                  {/* Dark mode override */}
+                  <c.icon className="w-5 h-5 dark:opacity-90" style={{color: c.ic}} />
                 </div>
-                <span className="text-xs font-500 text-slate-700 dark:text-slate-300 leading-tight">{c.label}</span>
+                <span className="font-body text-[12px] font-500 leading-tight" style={{color:'var(--text-2)'}}>
+                  {c.label}
+                </span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── POPULAR TESTS ─────────────────────────────────────── */}
+      {/* ── POPULAR TESTS ──────────────────────────────── */}
       {tests.length > 0 && (
-        <section className="py-14 bg-white dark:bg-slate-900">
+        <section className="py-14" style={{background:'var(--bg)'}}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <p className="section-label mb-1">Most Booked</p>
-                <h2 className="font-display text-2xl font-700 text-slate-900 dark:text-white">Popular Tests</h2>
+                <p className="label mb-1.5">Most Booked</p>
+                <h2 className="font-display text-[26px] font-700" style={{color:'var(--text-1)'}}>Popular Tests</h2>
               </div>
-              <Link href="/tests" className="flex items-center gap-1 text-sm font-500 text-forest-700 dark:text-forest-300 hover:underline">
+              <Link href="/tests" className="flex items-center gap-1 text-[13px] font-body font-500" style={{color:'var(--text-3)'}}>
                 View All <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {tests.slice(0, 8).map((t: any) => {
-                const name = t.test_parameter?.split('\n')[0]?.trim() || t.description?.split('\n')[0]?.trim() || 'Test';
-                const isProfile = t.type === 'PROFILE';
+              {tests.slice(0,8).map((t:any) => {
+                const name = t.test_parameter?.split('\n')[0]?.trim() || 'Test';
+                const isP = t.type==='PROFILE';
                 return (
-                  <div key={t.id} className="card p-5 flex flex-col">
-                    <span className={`badge self-start mb-3 ${isProfile ? 'badge-gold' : 'badge-green'}`}>
-                      {isProfile ? 'Panel' : 'Test'}
+                  <div key={t.id} className="card lift p-5 flex flex-col">
+                    <span className={`badge ${isP ? 'badge-gold' : 'badge-green'} self-start mb-3`}>
+                      {isP ? 'Panel' : 'Test'}
                     </span>
-                    <h3 className="text-sm font-600 text-slate-800 dark:text-slate-200 line-clamp-2 mb-2 flex-1 font-body leading-snug">{name}</h3>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                      <span className="font-display text-xl font-700 text-forest-800 dark:text-forest-300">₹{t.mrp}</span>
+                    <h3 className="font-body font-600 text-[13px] line-clamp-2 mb-auto leading-snug" style={{color:'var(--text-1)'}}>
+                      {name}
+                    </h3>
+                    <div className="flex items-center justify-between mt-4 pt-4" style={{borderTop:'1px solid var(--border)'}}>
+                      <span className="font-display font-700 text-[20px]" style={{color:'var(--text-1)'}}>₹{t.mrp}</span>
                       <Link href={`/tests/${t.id}`}
-                        className="text-xs font-600 text-forest-700 dark:text-forest-300 hover:text-forest-900 dark:hover:text-forest-100 flex items-center gap-1 transition-colors">
+                        className="text-[12px] font-body font-600 flex items-center gap-1 transition-colors"
+                        style={{color:'#1B4D3E'}}>
                         Book <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
@@ -176,42 +215,42 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── PACKAGES ──────────────────────────────────────────── */}
+      {/* ── PACKAGES ───────────────────────────────────── */}
       {packages.length > 0 && (
-        <section className="py-14 bg-slate-50 dark:bg-slate-900/50">
+        <section className="py-14" style={{background:'var(--bg-2)'}}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <p className="section-label mb-1">Preventive Care</p>
-                <h2 className="font-display text-2xl font-700 text-slate-900 dark:text-white">Health Packages</h2>
+                <p className="label mb-1.5">Preventive Care</p>
+                <h2 className="font-display text-[26px] font-700" style={{color:'var(--text-1)'}}>Health Packages</h2>
               </div>
-              <Link href="/packages" className="flex items-center gap-1 text-sm font-500 text-forest-700 dark:text-forest-300 hover:underline">
+              <Link href="/packages" className="flex items-center gap-1 text-[13px] font-body font-500" style={{color:'var(--text-3)'}}>
                 All Packages <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {packages.slice(0, 6).map((p: any) => {
+              {packages.slice(0,6).map((p:any) => {
                 const name = p.test_parameter?.split('\n')[0]?.trim() || 'Health Package';
                 const items = p.description?.replace(/\[X\]/g,'')?.split('\n')?.filter(Boolean).slice(0,4) || [];
                 return (
-                  <div key={p.id} className="card overflow-hidden flex flex-col">
-                    <div className="h-1 bg-forest-800" />
+                  <div key={p.id} className="card lift overflow-hidden flex flex-col">
+                    <div className="h-[3px]" style={{background:'linear-gradient(90deg,#1B4D3E,#F4B942)'}} />
                     <div className="p-5 flex flex-col flex-1">
                       <span className="badge badge-gold self-start mb-3">Health Package</span>
-                      <h3 className="text-sm font-600 text-slate-800 dark:text-slate-200 mb-2 font-body leading-snug">{name}</h3>
+                      <h3 className="font-body font-600 text-[14px] leading-snug mb-3" style={{color:'var(--text-1)'}}>{name}</h3>
                       {items.length > 0 && (
                         <ul className="space-y-1.5 mb-4 flex-1">
-                          {items.map((item: string, i: number) => (
+                          {items.map((item:string,i:number) => (
                             <li key={i} className="flex items-start gap-2">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-forest-600 mt-0.5 flex-shrink-0" />
-                              <span className="text-xs text-slate-500 dark:text-slate-400 leading-tight">{item.trim()}</span>
+                              <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{color:'#1B4D3E'}} />
+                              <span className="text-[12px] font-body leading-tight" style={{color:'var(--text-3)'}}>{item.trim()}</span>
                             </li>
                           ))}
                         </ul>
                       )}
-                      <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800 mt-auto">
-                        <span className="font-display text-2xl font-700 text-forest-800 dark:text-forest-300">₹{p.mrp}</span>
-                        <Link href={`/tests/${p.id}`} className="btn-primary text-xs py-2 px-4">
+                      <div className="flex items-center justify-between pt-4 mt-auto" style={{borderTop:'1px solid var(--border)'}}>
+                        <span className="font-display font-700 text-[22px]" style={{color:'var(--text-1)'}}>₹{p.mrp}</span>
+                        <Link href={`/tests/${p.id}`} className="btn btn-green text-[12px] py-2 px-4">
                           Book <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
@@ -224,89 +263,110 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── HOW IT WORKS ──────────────────────────────────────── */}
-      <section className="py-14 bg-forest-800 dark:bg-forest-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10">
-            <p className="text-xs font-600 text-gold-400 uppercase tracking-wider font-body mb-2">Simple Process</p>
-            <h2 className="font-display text-2xl font-700 text-white">How It Works</h2>
+      {/* ── HOW IT WORKS ───────────────────────────────── */}
+      <section className="py-16 relative overflow-hidden" style={{background:'#0D2B1E'}}>
+        {/* Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] pointer-events-none"
+          style={{background:'radial-gradient(ellipse,rgba(244,185,66,0.06) 0%,transparent 70%)'}} />
+        {/* Subtle grid */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'48px 48px'}} />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <p className="text-[11px] font-700 uppercase tracking-[0.12em] font-body mb-2" style={{color:'#F4B942'}}>Simple Process</p>
+            <h2 className="font-display text-[28px] font-700 text-white">How It Works</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {STEPS.map((s, i) => (
-              <div key={i} className="relative text-center p-6 rounded-xl bg-white/5 border border-white/10">
-                <div className="w-12 h-12 bg-gold-400/20 border border-gold-400/30 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <s.icon className="w-5 h-5 text-gold-400" />
+            {STEPS.map((s,i) => (
+              <div key={i} className="relative p-7 rounded-[16px] text-center"
+                style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',backdropFilter:'blur(20px)'}}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4"
+                  style={{background:'rgba(244,185,66,0.12)',border:'1px solid rgba(244,185,66,0.25)'}}>
+                  <s.icon className="w-5 h-5" style={{color:'#F4B942'}} />
                 </div>
-                <div className="w-7 h-7 bg-gold-400 rounded-full flex items-center justify-center mx-auto mb-3 -mt-2">
-                  <span className="text-xs font-700 text-slate-900 font-body">{s.n}</span>
+                <div className="w-6 h-6 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{background:'#F4B942'}}>
+                  <span className="text-[11px] font-700 font-body text-ink-900">{i+1}</span>
                 </div>
-                <h3 className="font-display text-lg font-600 text-white mb-2">{s.title}</h3>
-                <p className="text-sm text-white/60 leading-relaxed">{s.desc}</p>
+                <h3 className="font-display text-[18px] font-700 text-white mb-2">{s.title}</h3>
+                <p className="text-[13px] font-body leading-relaxed" style={{color:'rgba(255,255,255,0.55)'}}>{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── WHY NHCARE ────────────────────────────────────────── */}
-      <section className="py-14 bg-white dark:bg-slate-900">
+      {/* ── WHY NHCARE ─────────────────────────────────── */}
+      <section className="py-16" style={{background:'var(--bg)'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-14 items-start">
             <div>
-              <p className="section-label mb-2">Why Choose Us</p>
-              <h2 className="font-display text-3xl font-700 text-slate-900 dark:text-white mb-5">
-                25+ Years of Diagnostic Excellence
+              <p className="label mb-2">Why Choose Us</p>
+              <h2 className="font-display text-[32px] font-700 mb-5 leading-tight" style={{color:'var(--text-1)'}}>
+                25+ Years of<br />Diagnostic Excellence
               </h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
-                Niramaya Healthcare has been Delhi-NCR&apos;s trusted pathology partner since 1999. NHCare brings the same NABL-accredited excellence to your smartphone, with AI-powered insights that help you understand your health better.
+              <p className="text-[15px] mb-8 max-w-md" style={{color:'var(--text-3)',lineHeight:'1.75'}}>
+                Niramaya Healthcare has been Delhi-NCR&apos;s trusted pathology partner since 1999.
+                NHCare brings the same NABL-accredited excellence to your smartphone with AI-powered insights.
               </p>
-              <div className="space-y-4">
-                {[
-                  { icon: Shield, title: 'NABL Accredited Lab', desc: 'MC-2140 certified — the highest standard in diagnostic quality' },
-                  { icon: Home, title: 'Home Sample Collection', desc: 'Certified phlebotomists visit your home, 7AM to 9PM daily' },
-                  { icon: Brain, title: 'AI-Powered Reports', desc: 'Plain-language explanation of your results powered by GPT-4o' },
-                  { icon: Clock, title: '24-Hour Turnaround', desc: 'Most test reports ready within one business day' },
-                  { icon: MapPin, title: '490+ Partner Labs', desc: 'Wide coverage across all Delhi-NCR pincodes' },
-                ].map(item => (
-                  <div key={item.title} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-forest-50 dark:bg-forest-950 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <item.icon className="w-4 h-4 text-forest-700 dark:text-forest-400" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {WHY.map(w => (
+                  <div key={w.title} className="flex items-start gap-3 p-4 rounded-xl"
+                    style={{background:'var(--bg-2)',border:'1px solid var(--border)'}}>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{background:'var(--green-bg)'}}>
+                      <w.icon className="w-4 h-4" style={{color:'#1B4D3E'}} />
                     </div>
                     <div>
-                      <p className="text-sm font-600 text-slate-800 dark:text-slate-200 font-body">{item.title}</p>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">{item.desc}</p>
+                      <p className="font-body font-600 text-[13px] mb-0.5" style={{color:'var(--text-1)'}}>{w.title}</p>
+                      <p className="text-[12px]" style={{color:'var(--text-3)'}}>{w.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+
             <div className="space-y-4">
-              {/* Feature highlight cards */}
-              <div className="card p-6 border-l-4 border-l-forest-600">
-                <div className="flex items-center gap-3 mb-2">
-                  <FlaskConical className="w-5 h-5 text-forest-600" />
-                  <h3 className="font-display text-lg font-600 text-slate-900 dark:text-white">AI Lab Report Analysis</h3>
+              {/* AI Card */}
+              <div className="p-6 rounded-[14px]" style={{background:'var(--bg-2)',border:'1px solid var(--border)',borderLeft:'4px solid #1B4D3E'}}>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <FlaskConical className="w-5 h-5" style={{color:'#1B4D3E'}} />
+                  <h3 className="font-display text-[18px] font-700" style={{color:'var(--text-1)'}}>AI Lab Report Analysis</h3>
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Our AI reads your lab results and explains them in simple language — no medical degree needed. Know what&apos;s high, low, and what it means for you.</p>
-                <Link href="/dashboard/reports" className="inline-flex items-center gap-1 text-xs font-600 text-forest-700 dark:text-forest-300 mt-3 hover:underline">
+                <p className="text-[13px] leading-relaxed mb-3" style={{color:'var(--text-3)'}}>
+                  Our AI reads your lab results and explains them in simple language — no medical degree needed. Know what&apos;s high, low, and what it means for you.
+                </p>
+                <Link href="/dashboard/reports"
+                  className="inline-flex items-center gap-1 text-[12px] font-body font-600 transition-colors"
+                  style={{color:'#1B4D3E'}}>
                   View Sample Report <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
-              <div className="card p-6 border-l-4 border-l-gold-400">
-                <div className="flex items-center gap-3 mb-2">
-                  <Home className="w-5 h-5 text-gold-500" />
-                  <h3 className="font-display text-lg font-600 text-slate-900 dark:text-white">Home Collection</h3>
+
+              {/* Home Collection Card */}
+              <div className="p-6 rounded-[14px]" style={{background:'var(--bg-2)',border:'1px solid var(--border)',borderLeft:'4px solid #F4B942'}}>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <Home className="w-5 h-5" style={{color:'#d4971a'}} />
+                  <h3 className="font-display text-[18px] font-700" style={{color:'var(--text-1)'}}>Free Home Collection</h3>
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Enter your pincode to check same-day home collection availability. Our phlebotomist brings all sterile equipment — completely free of charge.</p>
-                <Link href="/home-collection" className="inline-flex items-center gap-1 text-xs font-600 text-gold-600 dark:text-gold-400 mt-3 hover:underline">
+                <p className="text-[13px] leading-relaxed mb-3" style={{color:'var(--text-3)'}}>
+                  Enter your pincode to check same-day availability. Our phlebotomist brings all sterile equipment — completely free.
+                </p>
+                <Link href="/home-collection"
+                  className="inline-flex items-center gap-1 text-[12px] font-body font-600"
+                  style={{color:'#d4971a'}}>
                   Check Your Pincode <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[{val:'99.2%',label:'Accuracy Rate'},{val:'Free',label:'Home Visit'}].map(s=>(
-                  <div key={s.label} className="card p-4 text-center">
-                    <p className="font-display text-2xl font-700 text-forest-800 dark:text-forest-300">{s.val}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-body">{s.label}</p>
+
+              {/* Mini stats */}
+              <div className="grid grid-cols-2 gap-3">
+                {[{v:'99.2%',l:'Accuracy Rate'},{v:'Free',l:'Home Visit'}].map(s => (
+                  <div key={s.l} className="p-4 rounded-xl text-center"
+                    style={{background:'var(--bg-2)',border:'1px solid var(--border)'}}>
+                    <p className="font-display font-700 text-[26px] mb-0.5" style={{color:'var(--text-1)'}}>{s.v}</p>
+                    <p className="text-[12px] font-body" style={{color:'var(--text-3)'}}>{s.l}</p>
                   </div>
                 ))}
               </div>
@@ -315,29 +375,39 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── HOME COLLECTION CTA ───────────────────────────────── */}
-      <section className="py-12 bg-gold-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* ── HOME COLLECTION CTA ─────────────────────────── */}
+      <section className="py-12" style={{background:'#F4B942'}}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-7">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-slate-900/10 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Home className="w-6 h-6 text-slate-900" />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{background:'rgba(15,23,42,0.12)'}}>
+              <Home className="w-5 h-5" style={{color:'#0f172a'}} />
             </div>
             <div>
-              <p className="text-xs font-600 text-slate-700 uppercase tracking-wider font-body mb-0.5">Home Collection Available</p>
-              <h2 className="font-display text-2xl font-700 text-slate-900 mb-1">Sample Collected at Your Door</h2>
-              <p className="text-sm text-slate-700">Enter your pincode to check availability · 7AM–9PM · Certified Phlebotomists</p>
+              <p className="font-body text-[11px] font-700 uppercase tracking-wider mb-0.5" style={{color:'rgba(15,23,42,0.6)'}}>
+                Home Collection Available
+              </p>
+              <h2 className="font-display text-[22px] font-700 mb-1" style={{color:'#0f172a'}}>
+                Sample Collected at Your Door
+              </h2>
+              <p className="text-[13px] font-body" style={{color:'rgba(15,23,42,0.65)'}}>
+                Enter your pincode to check availability · 7AM–9PM · Certified Phlebotomists
+              </p>
             </div>
           </div>
           <div className="flex gap-3 flex-shrink-0">
-            <Link href="/home-collection" className="btn-primary text-sm px-6 py-3 whitespace-nowrap">
+            <Link href="/home-collection" className="btn btn-green text-[13px] px-7 py-3">
               Book Home Collection <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link href="/centers" className="bg-white text-slate-800 font-600 text-sm px-6 py-3 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 whitespace-nowrap">
+            <Link href="/centers"
+              className="btn text-[13px] px-6 py-3 rounded-lg font-600"
+              style={{background:'rgba(255,255,255,0.9)',color:'#0f172a'}}>
               <Star className="w-4 h-4" /> Our Centers
             </Link>
           </div>
         </div>
       </section>
+
     </div>
   );
 }
